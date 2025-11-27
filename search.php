@@ -79,17 +79,18 @@ $canonical = hs_search_url($q);
       backdrop-filter: blur(18px);
       background: linear-gradient(90deg, rgba(15,23,42,0.92), rgba(15,23,42,0.96));
       border-bottom: 1px solid rgba(15,23,42,0.9);
-      padding: 8px 18px;
-      display:flex;
+      padding: 10px 18px;
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:12px;
       align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
     }
 
     .top-left {
       display:flex;
       align-items:center;
       gap:10px;
+      min-width:0;
     }
 
     .logo-link {
@@ -135,6 +136,9 @@ $canonical = hs_search_url($q);
       opacity:.85;
     }
 
+    .nav-toggle { display:none; align-items:center; justify-content:center; width:40px; height:40px; border-radius:12px; border:1px solid rgba(148,163,184,0.6); background:rgba(15,23,42,0.8); color:#E5E7EB; cursor:pointer; }
+    .header-right { display:flex; align-items:center; gap:12px; justify-content:flex-end; flex-wrap:wrap; }
+
     .nav-main {
       display:flex;
       align-items:center;
@@ -142,10 +146,11 @@ $canonical = hs_search_url($q);
       font-size:12px;
       text-transform:uppercase;
       letter-spacing:.12em;
+      flex-wrap:wrap;
     }
     .nav-main a {
       color:#E5E7EB;
-      padding:4px 6px;
+      padding:6px 8px;
       border-radius:999px;
     }
     .nav-main a:hover {
@@ -160,7 +165,7 @@ $canonical = hs_search_url($q);
       margin-top:4px;
     }
     .nav-search input[type="text"] {
-      padding:4px 10px;
+      padding:6px 12px;
       border-radius:999px;
       border:1px solid rgba(148,163,184,0.9);
       font-size:12px;
@@ -172,6 +177,7 @@ $canonical = hs_search_url($q);
       color:#9CA3AF;
     }
     .nav-search button { display:none; }
+    .language-switcher { min-width:120px; padding:6px 10px; border-radius:10px; border:1px solid rgba(148,163,184,0.5); background:#0B1120; color:#E5E7EB; }
 
     .user-bar {
       font-size:11px;
@@ -273,19 +279,22 @@ $canonical = hs_search_url($q);
     .footer-links a { color:#E5E7EB; }
     .footer-links a:hover { color:#FACC15; text-decoration:none; }
 
-    @media (max-width:900px) {
-      .result-list {
-        grid-template-columns:minmax(0,1fr);
-      }
+    @media (max-width:960px) {
+      header { grid-template-columns:1fr auto; align-items:flex-start; }
+      .nav-toggle { display:inline-flex; }
+      .header-right { width:100%; display:none; flex-direction:column; align-items:flex-start; }
+      header.nav-open .header-right { display:flex; }
+      .nav-main { width:100%; flex-direction:column; align-items:flex-start; }
+      .nav-main a { width:100%; padding:10px; border-radius:12px; background:rgba(15,23,42,0.65); }
+      .nav-search { width:100%; margin:0; }
+      .nav-search input[type="text"] { width:100%; }
+      .user-bar { width:100%; text-align:left; }
+      .language-switcher { width:100%; }
+      .result-list { grid-template-columns:minmax(0,1fr); }
     }
     @media (max-width:640px) {
       header { padding:8px 10px; }
       .page { padding:14px 8px 24px; }
-      .nav-search {
-        width:100%;
-        margin:6px 0 0;
-      }
-      .nav-search input[type="text"] { width:100%; }
     }
   </style>
 </head>
@@ -300,41 +309,36 @@ $canonical = hs_search_url($q);
       </div>
     </a>
   </div>
-  <nav class="nav-main">
-    <a href="<?= hs_base_url('index.php#top') ?>">Home</a>
-    <a href="<?= hs_category_url('') ?>">India</a>
-    <a href="<?= hs_category_url('') ?>">GCC</a>
-    <a href="<?= hs_category_url('') ?>">Kerala</a>
-    <a href="<?= hs_category_url('') ?>">World</a>
-    <a href="<?= hs_category_url('') ?>">Sports</a>
-    <a href="<?= hs_category_url('') ?>">Entertainment</a>
-    <a href="<?= hs_category_url('') ?>">Business</a>
-    <a href="<?= hs_category_url('') ?>">Technology</a>
-    <a href="<?= hs_category_url('') ?>">Lifestyle</a>
-    <a href="<?= hs_category_url('') ?>">Health</a>
-    <a href="<?= hs_category_url('') ?>">Travel</a>
-    <a href="<?= hs_category_url('') ?>">Auto</a>
-    <a href="<?= hs_category_url('') ?>">Opinion</a>
-    <a href="<?= hs_category_url('') ?>">Politics</a>
-    <a href="<?= hs_category_url('') ?>">Crime</a>
-    <a href="<?= hs_category_url('') ?>">Education</a>
-    <a href="<?= hs_category_url('') ?>">Religion</a>
-  </nav>
-  <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
-    <input type="text" name="q" placeholder="Search news..." value="<?= htmlspecialchars($q) ?>">
-    <button type="submit">Search</button>
-  </form>
-  <div class="user-bar">
-    <?php $u = hs_current_user(); ?>
-    <?php if ($u): ?>
-      <?= htmlspecialchars($u['name']) ?>
-      <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
-      · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
-      · <a href="<?= hs_logout_url() ?>">Logout</a>
-    <?php else: ?>
-      <a href="<?= hs_login_url() ?>">Login</a> ·
-      <a href="<?= hs_register_url() ?>">Register</a>
-    <?php endif; ?>
+  <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  <div class="header-right">
+    <nav class="nav-main">
+      <?php foreach (hs_primary_nav_items() as $item): ?>
+        <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars($item['label']) ?></a>
+      <?php endforeach; ?>
+    </nav>
+    <div class="nav-utilities stack-mobile" style="align-items:flex-start; width:100%;">
+      <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
+        <input type="text" name="q" placeholder="Search news..." value="<?= htmlspecialchars($q) ?>">
+        <button type="submit">Search</button>
+      </form>
+      <select class="language-switcher" aria-label="Language">
+        <option>English</option>
+        <option>العربية</option>
+        <option>മലയാളം</option>
+      </select>
+    </div>
+    <div class="user-bar">
+      <?php $u = hs_current_user(); ?>
+      <?php if ($u): ?>
+        <?= htmlspecialchars($u['name']) ?>
+        <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
+        · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
+        · <a href="<?= hs_logout_url() ?>">Logout</a>
+      <?php else: ?>
+        <a href="<?= hs_login_url() ?>">Login</a> ·
+        <a href="<?= hs_register_url() ?>">Register</a>
+      <?php endif; ?>
+    </div>
   </div>
 </header>
 
@@ -392,6 +396,17 @@ $canonical = hs_search_url($q);
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
   <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
 </footer>
+
+<script>
+  const navToggle = document.querySelector('.nav-toggle');
+  const headerEl = document.querySelector('header');
+  if (navToggle && headerEl) {
+    navToggle.addEventListener('click', () => {
+      const isOpen = headerEl.classList.toggle('nav-open');
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+</script>
 
 </body>
 </html>

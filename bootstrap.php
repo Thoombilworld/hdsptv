@@ -49,6 +49,30 @@ function hs_dashboard_url() {
     return hs_base_url('dashboard');
 }
 
+function hs_primary_nav_items()
+{
+    return [
+        ['label' => 'Home',           'slug' => 'home',          'url' => hs_base_url('index.php#top')],
+        ['label' => 'India',          'slug' => 'india',         'url' => hs_category_url('india')],
+        ['label' => 'GCC',            'slug' => 'gcc',           'url' => hs_category_url('gcc')],
+        ['label' => 'Kerala',         'slug' => 'kerala',        'url' => hs_category_url('kerala')],
+        ['label' => 'World',          'slug' => 'world',         'url' => hs_category_url('world')],
+        ['label' => 'Sports',         'slug' => 'sports',        'url' => hs_category_url('sports')],
+        ['label' => 'Entertainment',  'slug' => 'entertainment', 'url' => hs_category_url('entertainment')],
+        ['label' => 'Business',       'slug' => 'business',      'url' => hs_category_url('business')],
+        ['label' => 'Technology',     'slug' => 'technology',    'url' => hs_category_url('technology')],
+        ['label' => 'Lifestyle',      'slug' => 'lifestyle',     'url' => hs_category_url('lifestyle')],
+        ['label' => 'Health',         'slug' => 'health',        'url' => hs_category_url('health')],
+        ['label' => 'Travel',         'slug' => 'travel',        'url' => hs_category_url('travel')],
+        ['label' => 'Auto',           'slug' => 'auto',          'url' => hs_category_url('auto')],
+        ['label' => 'Opinion',        'slug' => 'opinion',       'url' => hs_category_url('opinion')],
+        ['label' => 'Politics',       'slug' => 'politics',      'url' => hs_category_url('politics')],
+        ['label' => 'Crime',          'slug' => 'crime',         'url' => hs_category_url('crime')],
+        ['label' => 'Education',      'slug' => 'education',     'url' => hs_category_url('education')],
+        ['label' => 'Religion',       'slug' => 'religion',      'url' => hs_category_url('religion')],
+    ];
+}
+
 function hs_current_theme()
 {
     static $theme = null;

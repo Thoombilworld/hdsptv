@@ -62,17 +62,18 @@
       backdrop-filter: blur(18px);
       background: linear-gradient(90deg, rgba(15,23,42,0.92), rgba(15,23,42,0.96));
       border-bottom: 1px solid var(--hs-border);
-      padding: 8px 18px;
-      display:flex;
+      padding: 10px 18px;
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:12px;
       align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
     }
 
     .top-left {
       display:flex;
       align-items:center;
       gap:10px;
+      min-width:0;
     }
 
     .logo-link {
@@ -82,10 +83,7 @@
       color:inherit;
       text-decoration:none;
     }
-    .logo-link:hover {
-      text-decoration:none;
-      color:#FACC15;
-    }
+    .logo-link:hover { text-decoration:none; color:#FACC15; }
 
     .logo-mark {
       width:32px;
@@ -101,19 +99,29 @@
       box-shadow:0 10px 25px rgba(15,23,42,0.6);
     }
 
-    .logo-text {
-      display:flex;
-      flex-direction:column;
-    }
-    .logo-text-main {
-      font-weight:800;
-      letter-spacing:.18em;
-      font-size:13px;
-    }
-    .logo-text-tag {
-      font-size:11px;
+    .logo-text { display:flex; flex-direction:column; }
+    .logo-text-main { font-weight:800; letter-spacing:.18em; font-size:13px; }
+    .logo-text-tag { font-size:11px; color:#E5E7EB; opacity:.85; }
+
+    .nav-toggle {
+      display:none;
+      align-items:center;
+      justify-content:center;
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      border:1px solid rgba(148,163,184,0.6);
+      background:rgba(15,23,42,0.8);
       color:#E5E7EB;
-      opacity:.85;
+      cursor:pointer;
+    }
+
+    .header-right {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
     }
 
     .nav-main {
@@ -123,25 +131,18 @@
       font-size:12px;
       text-transform:uppercase;
       letter-spacing:.12em;
+      flex-wrap:wrap;
     }
     .nav-main a {
       color:#E5E7EB;
-      padding:4px 6px;
+      padding:6px 8px;
       border-radius:999px;
     }
-    .nav-main a:hover {
-      background:rgba(15,23,42,0.8);
-      color:#FACC15;
-      text-decoration:none;
-    }
+    .nav-main a:hover { background:rgba(15,23,42,0.8); color:#FACC15; text-decoration:none; }
 
-    .nav-search {
-      margin-left:auto;
-      margin-right:12px;
-      margin-top:4px;
-    }
+    .nav-search { margin-left:auto; margin-right:12px; margin-top:4px; }
     .nav-search input[type="text"] {
-      padding:4px 10px;
+      padding:6px 12px;
       border-radius:999px;
       border:1px solid rgba(148,163,184,0.9);
       font-size:12px;
@@ -149,27 +150,26 @@
       color:#111827;
       min-width:200px;
     }
-    .nav-search input[type="text"]::placeholder {
-      color:#9CA3AF;
-    }
+    .nav-search input[type="text"]::placeholder { color:#9CA3AF; }
     .nav-search button { display:none; }
 
-    @media (max-width:640px) {
-      .nav-search {
-        width:100%;
-        margin:6px 0 0;
-      }
-      .nav-search input[type="text"] {
-        width:100%;
-      }
-    }
+    .language-switcher { min-width:120px; padding:6px 10px; border-radius:10px; border:1px solid rgba(148,163,184,0.5); background:#0B1120; color:#E5E7EB; }
 
-    .user-bar {
-      font-size:11px;
-      color:#E5E7EB;
-      text-align:right;
-    }
+    .user-bar { font-size:11px; color:#E5E7EB; text-align:right; }
     .user-bar a { color:#FACC15; }
+
+    @media (max-width:960px) {
+      header { grid-template-columns:1fr auto; align-items:flex-start; }
+      .nav-toggle { display:inline-flex; }
+      .header-right { width:100%; display:none; flex-direction:column; align-items:flex-start; }
+      header.nav-open .header-right { display:flex; }
+      .nav-main { width:100%; flex-direction:column; align-items:flex-start; }
+      .nav-main a { width:100%; padding:10px; border-radius:12px; background:rgba(15,23,42,0.65); }
+      .nav-search { width:100%; margin:0; }
+      .nav-search input[type="text"] { width:100%; }
+      .user-bar { width:100%; text-align:left; }
+      .language-switcher { width:100%; }
+    }
 
     .page {
       width:100%;
@@ -181,6 +181,12 @@
       grid-template-columns: minmax(0,3.2fr) minmax(0,2fr);
       gap:14px;
       padding:12px 18px 28px;
+    }
+
+    @media (max-width:1080px) {
+      .layout-main { grid-template-columns:1fr; }
+      .sidebar { order:2; }
+      .column { order:1; }
     }
 
     .column {
@@ -531,16 +537,6 @@
       .region-row {
         grid-template-columns: minmax(0,1fr);
       }
-      .nav-main {
-        width:100%;
-        justify-content:flex-start;
-        margin-top:6px;
-        overflow-x:auto;
-      }
-      .user-bar {
-        text-align:left;
-        margin-top:6px;
-      }
     }
   </style>
 </head>
@@ -612,43 +608,39 @@
       <div class="logo-text">
       <div class="logo-text-main">NEWS HDSPTV</div>
       <div class="logo-text-tag"><?= htmlspecialchars($settings['tagline'] ?? 'GCC • INDIA • KERALA • WORLD') ?></div>
-    </div>
+      </div>
+    </a>
   </div>
-  <nav class="nav-main">
-    <a href="<?= hs_base_url('index.php#top') ?>">Home</a>
-    <a href="<?= hs_category_url('india') ?>">India</a>
-    <a href="<?= hs_category_url('gcc') ?>">GCC</a>
-    <a href="<?= hs_category_url('kerala') ?>">Kerala</a>
-    <a href="<?= hs_category_url('world') ?>">World</a>
-    <a href="<?= hs_category_url('sports') ?>">Sports</a>
-    <a href="<?= hs_category_url('entertainment') ?>">Entertainment</a>
-    <a href="<?= hs_category_url('business') ?>">Business</a>
-    <a href="<?= hs_category_url('technology') ?>">Technology</a>
-    <a href="<?= hs_category_url('lifestyle') ?>">Lifestyle</a>
-    <a href="<?= hs_category_url('health') ?>">Health</a>
-    <a href="<?= hs_category_url('travel') ?>">Travel</a>
-    <a href="<?= hs_category_url('auto') ?>">Auto</a>
-    <a href="<?= hs_category_url('opinion') ?>">Opinion</a>
-    <a href="<?= hs_category_url('politics') ?>">Politics</a>
-    <a href="<?= hs_category_url('crime') ?>">Crime</a>
-    <a href="<?= hs_category_url('education') ?>">Education</a>
-    <a href="<?= hs_category_url('religion') ?>">Religion</a>
-  </nav>
-  <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
-    <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
-    <button type="submit">Search</button>
-  </form>
-  <div class="user-bar">
-    <?php $u = hs_current_user(); ?>
-    <?php if ($u): ?>
-      <?= htmlspecialchars($u['name']) ?>
-      <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
-      · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
-      · <a href="<?= hs_logout_url() ?>">Logout</a>
-    <?php else: ?>
-      <a href="<?= hs_login_url() ?>">Login</a> ·
-      <a href="<?= hs_register_url() ?>">Register</a>
-    <?php endif; ?>
+  <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  <div class="header-right">
+    <nav class="nav-main">
+      <?php foreach (hs_primary_nav_items() as $item): ?>
+        <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars($item['label']) ?></a>
+      <?php endforeach; ?>
+    </nav>
+    <div class="nav-utilities stack-mobile" style="align-items:flex-start; width:100%;">
+      <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
+        <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
+        <button type="submit">Search</button>
+      </form>
+      <select class="language-switcher" aria-label="Language">
+        <option>English</option>
+        <option>العربية</option>
+        <option>മലയാളം</option>
+      </select>
+    </div>
+    <div class="user-bar">
+      <?php $u = hs_current_user(); ?>
+      <?php if ($u): ?>
+        <?= htmlspecialchars($u['name']) ?>
+        <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
+        · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
+        · <a href="<?= hs_logout_url() ?>">Logout</a>
+      <?php else: ?>
+        <a href="<?= hs_login_url() ?>">Login</a> ·
+        <a href="<?= hs_register_url() ?>">Register</a>
+      <?php endif; ?>
+    </div>
   </div>
 </header>
 
@@ -1281,5 +1273,15 @@
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
   <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
 </footer>
+<script>
+  const navToggle = document.querySelector('.nav-toggle');
+  const headerEl = document.querySelector('header');
+  if (navToggle && headerEl) {
+    navToggle.addEventListener('click', () => {
+      const isOpen = headerEl.classList.toggle('nav-open');
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+</script>
 </body>
 </html>
