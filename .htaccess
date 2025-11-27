@@ -31,6 +31,12 @@ RewriteRule ^register/?$ auth/register.php [L,QSA]
 RewriteRule ^forgot-password/?$ auth/forgot.php [L,QSA]
 RewriteRule ^reset-password/?$ auth/reset.php [L,QSA]
 
+# User dashboard
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^dashboard/?$ user/dashboard.php [L,QSA]
+RewriteRule ^account/?$ user/dashboard.php [L,QSA]
+
 </IfModule>
 
 Options -Indexes

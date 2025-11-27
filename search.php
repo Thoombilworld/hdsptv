@@ -317,6 +317,7 @@ $canonical = hs_base_url('search.php' . ($q !== '' ? ('?q=' . urlencode($q)) : '
     <?php if ($u): ?>
       <?= htmlspecialchars($u['name']) ?>
       <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
+      · <a href="<?= hs_base_url('user/dashboard.php') ?>">Dashboard</a>
       · <a href="<?= hs_base_url('auth/logout.php') ?>">Logout</a>
     <?php else: ?>
       <a href="<?= hs_base_url('auth/login.php') ?>">Login</a> ·

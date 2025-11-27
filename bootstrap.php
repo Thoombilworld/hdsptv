@@ -98,7 +98,7 @@ function hs_require_admin() {
 function hs_current_user() {
     if (empty($_SESSION['hs_user_id'])) return null;
     $id = (int) $_SESSION['hs_user_id'];
-    $res = mysqli_query(hs_db(), "SELECT id, name, email, is_premium FROM hs_frontend_users WHERE id = " . $id . " LIMIT 1");
+    $res = mysqli_query(hs_db(), "SELECT id, name, email, is_premium, created_at FROM hs_frontend_users WHERE id = " . $id . " LIMIT 1");
     return $res ? mysqli_fetch_assoc($res) : null;
 }
 function hs_require_user() {
