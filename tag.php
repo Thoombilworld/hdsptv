@@ -43,7 +43,7 @@ $site_title = $settings['site_title'] ?? 'NEWS HDSPTV';
 $page_title = '#' . $tag['name'] . ' – ' . $site_title;
 $meta_desc = 'Articles tagged with ' . $tag['name'] . ' on ' . $site_title;
 $meta_keys = ($settings['seo_meta_keywords'] ?? '') . ', ' . $tag['name'];
-$canonical = hs_base_url('tag.php?slug=' . urlencode($tag['slug']));
+$canonical = hs_tag_url($tag['slug']);
 ?>
 <!doctype html>
 <html lang="en">
@@ -230,25 +230,25 @@ $canonical = hs_base_url('tag.php?slug=' . urlencode($tag['slug']));
   </div>
   <nav class="nav-main">
     <a href="<?= hs_base_url('index.php#top') ?>">Home</a>
-    <a href="<?= hs_base_url('category.php?slug=india') ?>">India</a>
-    <a href="<?= hs_base_url('category.php?slug=gcc') ?>">GCC</a>
-    <a href="<?= hs_base_url('category.php?slug=kerala') ?>">Kerala</a>
-    <a href="<?= hs_base_url('category.php?slug=world') ?>">World</a>
-    <a href="<?= hs_base_url('category.php?slug=sports') ?>">Sports</a>
-    <a href="<?= hs_base_url('category.php?slug=entertainment') ?>">Entertainment</a>
-    <a href="<?= hs_base_url('category.php?slug=business') ?>">Business</a>
-    <a href="<?= hs_base_url('category.php?slug=technology') ?>">Technology</a>
-    <a href="<?= hs_base_url('category.php?slug=lifestyle') ?>">Lifestyle</a>
-    <a href="<?= hs_base_url('category.php?slug=health') ?>">Health</a>
-    <a href="<?= hs_base_url('category.php?slug=travel') ?>">Travel</a>
-    <a href="<?= hs_base_url('category.php?slug=auto') ?>">Auto</a>
-    <a href="<?= hs_base_url('category.php?slug=opinion') ?>">Opinion</a>
-    <a href="<?= hs_base_url('category.php?slug=politics') ?>">Politics</a>
-    <a href="<?= hs_base_url('category.php?slug=crime') ?>">Crime</a>
-    <a href="<?= hs_base_url('category.php?slug=education') ?>">Education</a>
-    <a href="<?= hs_base_url('category.php?slug=religion') ?>">Religion</a>
+    <a href="<?= hs_category_url('') ?>">India</a>
+    <a href="<?= hs_category_url('') ?>">GCC</a>
+    <a href="<?= hs_category_url('') ?>">Kerala</a>
+    <a href="<?= hs_category_url('') ?>">World</a>
+    <a href="<?= hs_category_url('') ?>">Sports</a>
+    <a href="<?= hs_category_url('') ?>">Entertainment</a>
+    <a href="<?= hs_category_url('') ?>">Business</a>
+    <a href="<?= hs_category_url('') ?>">Technology</a>
+    <a href="<?= hs_category_url('') ?>">Lifestyle</a>
+    <a href="<?= hs_category_url('') ?>">Health</a>
+    <a href="<?= hs_category_url('') ?>">Travel</a>
+    <a href="<?= hs_category_url('') ?>">Auto</a>
+    <a href="<?= hs_category_url('') ?>">Opinion</a>
+    <a href="<?= hs_category_url('') ?>">Politics</a>
+    <a href="<?= hs_category_url('') ?>">Crime</a>
+    <a href="<?= hs_category_url('') ?>">Education</a>
+    <a href="<?= hs_category_url('') ?>">Religion</a>
   </nav>
-  <form class="nav-search" action="<?= hs_base_url('search.php') ?>" method="get">
+  <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
     <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
     <button type="submit">Search</button>
   </form>
@@ -276,9 +276,9 @@ $canonical = hs_base_url('tag.php?slug=' . urlencode($tag['slug']));
               <div class="news-kicker">
                 <?= htmlspecialchars($p['category_name'] ?: 'News') ?>
               </div>
-              <h2 class="news-title">
-                <a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a>
-              </h2>
+                <h2 class="news-title">
+                  <a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a>
+                </h2>
               <div class="news-meta">
                 <?= hs_post_date_local($p) ?>
               </div>

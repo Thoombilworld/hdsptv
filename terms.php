@@ -115,23 +115,23 @@ $canonical = hs_base_url('terms');
   </div>
   <nav class="nav-main">
     <a href="<?= hs_base_url('index.php#top') ?>">Home</a>
-    <a href="<?= hs_base_url('category.php?slug=india') ?>">India</a>
-    <a href="<?= hs_base_url('category.php?slug=gcc') ?>">GCC</a>
-    <a href="<?= hs_base_url('category.php?slug=kerala') ?>">Kerala</a>
-    <a href="<?= hs_base_url('category.php?slug=world') ?>">World</a>
-    <a href="<?= hs_base_url('category.php?slug=sports') ?>">Sports</a>
-    <a href="<?= hs_base_url('category.php?slug=entertainment') ?>">Entertainment</a>
-    <a href="<?= hs_base_url('category.php?slug=business') ?>">Business</a>
-    <a href="<?= hs_base_url('category.php?slug=technology') ?>">Technology</a>
-    <a href="<?= hs_base_url('category.php?slug=lifestyle') ?>">Lifestyle</a>
-    <a href="<?= hs_base_url('category.php?slug=health') ?>">Health</a>
-    <a href="<?= hs_base_url('category.php?slug=travel') ?>">Travel</a>
-    <a href="<?= hs_base_url('category.php?slug=auto') ?>">Auto</a>
-    <a href="<?= hs_base_url('category.php?slug=opinion') ?>">Opinion</a>
-    <a href="<?= hs_base_url('category.php?slug=politics') ?>">Politics</a>
-    <a href="<?= hs_base_url('category.php?slug=crime') ?>">Crime</a>
-    <a href="<?= hs_base_url('category.php?slug=education') ?>">Education</a>
-    <a href="<?= hs_base_url('category.php?slug=religion') ?>">Religion</a>
+    <a href="<?= hs_category_url('') ?>">India</a>
+    <a href="<?= hs_category_url('') ?>">GCC</a>
+    <a href="<?= hs_category_url('') ?>">Kerala</a>
+    <a href="<?= hs_category_url('') ?>">World</a>
+    <a href="<?= hs_category_url('') ?>">Sports</a>
+    <a href="<?= hs_category_url('') ?>">Entertainment</a>
+    <a href="<?= hs_category_url('') ?>">Business</a>
+    <a href="<?= hs_category_url('') ?>">Technology</a>
+    <a href="<?= hs_category_url('') ?>">Lifestyle</a>
+    <a href="<?= hs_category_url('') ?>">Health</a>
+    <a href="<?= hs_category_url('') ?>">Travel</a>
+    <a href="<?= hs_category_url('') ?>">Auto</a>
+    <a href="<?= hs_category_url('') ?>">Opinion</a>
+    <a href="<?= hs_category_url('') ?>">Politics</a>
+    <a href="<?= hs_category_url('') ?>">Crime</a>
+    <a href="<?= hs_category_url('') ?>">Education</a>
+    <a href="<?= hs_category_url('') ?>">Religion</a>
   </nav>
   <form class="nav-search" action="<?= hs_base_url('search.php') ?>" method="get">
     <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
@@ -142,11 +142,11 @@ $canonical = hs_base_url('terms');
     <?php if ($u): ?>
       <?= htmlspecialchars($u['name']) ?>
       <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
-      · <a href="<?= hs_base_url('user/dashboard.php') ?>">Dashboard</a>
-      · <a href="<?= hs_base_url('auth/logout.php') ?>">Logout</a>
+      · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
+      · <a href="<?= hs_logout_url() ?>">Logout</a>
     <?php else: ?>
-      <a href="<?= hs_base_url('auth/login.php') ?>">Login</a> ·
-      <a href="<?= hs_base_url('auth/register.php') ?>">Register</a>
+      <a href="<?= hs_login_url() ?>">Login</a> ·
+      <a href="<?= hs_register_url() ?>">Register</a>
     <?php endif; ?>
   </div>
 </header>

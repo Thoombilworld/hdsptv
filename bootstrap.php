@@ -6,6 +6,49 @@ function hs_base_url($path = '') {
     return HS_BASE_URL . ltrim($path, '/');
 }
 
+function hs_news_url($slug) {
+    return hs_base_url('news/' . urlencode($slug));
+}
+
+function hs_category_url($slug) {
+    return hs_base_url('category/' . urlencode($slug));
+}
+
+function hs_tag_url($slug) {
+    return hs_base_url('tag/' . urlencode($slug));
+}
+
+function hs_search_url($query = '') {
+    if ($query === '') {
+        return hs_base_url('search');
+    }
+    return hs_base_url('search?q=' . urlencode($query));
+}
+
+function hs_login_url() {
+    return hs_base_url('login');
+}
+
+function hs_register_url() {
+    return hs_base_url('register');
+}
+
+function hs_forgot_password_url() {
+    return hs_base_url('forgot-password');
+}
+
+function hs_logout_url() {
+    return hs_base_url('logout');
+}
+
+function hs_reset_password_url($token = '') {
+    return hs_base_url('reset-password' . ($token !== '' ? ('?token=' . urlencode($token)) : ''));
+}
+
+function hs_dashboard_url() {
+    return hs_base_url('dashboard');
+}
+
 function hs_current_theme()
 {
     static $theme = null;
@@ -108,7 +151,7 @@ function hs_current_user() {
 }
 function hs_require_user() {
     if (!hs_current_user()) {
-        header('Location: ' . hs_base_url('auth/login.php'));
+        header('Location: ' . hs_login_url());
         exit;
     }
 }

@@ -616,25 +616,25 @@
   </div>
   <nav class="nav-main">
     <a href="<?= hs_base_url('index.php#top') ?>">Home</a>
-    <a href="<?= hs_base_url('category.php?slug=india') ?>">India</a>
-    <a href="<?= hs_base_url('category.php?slug=gcc') ?>">GCC</a>
-    <a href="<?= hs_base_url('category.php?slug=kerala') ?>">Kerala</a>
-    <a href="<?= hs_base_url('category.php?slug=world') ?>">World</a>
-    <a href="<?= hs_base_url('category.php?slug=sports') ?>">Sports</a>
-    <a href="<?= hs_base_url('category.php?slug=entertainment') ?>">Entertainment</a>
-    <a href="<?= hs_base_url('category.php?slug=business') ?>">Business</a>
-    <a href="<?= hs_base_url('category.php?slug=technology') ?>">Technology</a>
-    <a href="<?= hs_base_url('category.php?slug=lifestyle') ?>">Lifestyle</a>
-    <a href="<?= hs_base_url('category.php?slug=health') ?>">Health</a>
-    <a href="<?= hs_base_url('category.php?slug=travel') ?>">Travel</a>
-    <a href="<?= hs_base_url('category.php?slug=auto') ?>">Auto</a>
-    <a href="<?= hs_base_url('category.php?slug=opinion') ?>">Opinion</a>
-    <a href="<?= hs_base_url('category.php?slug=politics') ?>">Politics</a>
-    <a href="<?= hs_base_url('category.php?slug=crime') ?>">Crime</a>
-    <a href="<?= hs_base_url('category.php?slug=education') ?>">Education</a>
-    <a href="<?= hs_base_url('category.php?slug=religion') ?>">Religion</a>
+    <a href="<?= hs_category_url('india') ?>">India</a>
+    <a href="<?= hs_category_url('gcc') ?>">GCC</a>
+    <a href="<?= hs_category_url('kerala') ?>">Kerala</a>
+    <a href="<?= hs_category_url('world') ?>">World</a>
+    <a href="<?= hs_category_url('sports') ?>">Sports</a>
+    <a href="<?= hs_category_url('entertainment') ?>">Entertainment</a>
+    <a href="<?= hs_category_url('business') ?>">Business</a>
+    <a href="<?= hs_category_url('technology') ?>">Technology</a>
+    <a href="<?= hs_category_url('lifestyle') ?>">Lifestyle</a>
+    <a href="<?= hs_category_url('health') ?>">Health</a>
+    <a href="<?= hs_category_url('travel') ?>">Travel</a>
+    <a href="<?= hs_category_url('auto') ?>">Auto</a>
+    <a href="<?= hs_category_url('opinion') ?>">Opinion</a>
+    <a href="<?= hs_category_url('politics') ?>">Politics</a>
+    <a href="<?= hs_category_url('crime') ?>">Crime</a>
+    <a href="<?= hs_category_url('education') ?>">Education</a>
+    <a href="<?= hs_category_url('religion') ?>">Religion</a>
   </nav>
-  <form class="nav-search" action="<?= hs_base_url('search.php') ?>" method="get">
+  <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
     <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
     <button type="submit">Search</button>
   </form>
@@ -643,11 +643,11 @@
     <?php if ($u): ?>
       <?= htmlspecialchars($u['name']) ?>
       <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
-      · <a href="<?= hs_base_url('user/dashboard.php') ?>">Dashboard</a>
-      · <a href="<?= hs_base_url('auth/logout.php') ?>">Logout</a>
+      · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
+      · <a href="<?= hs_logout_url() ?>">Logout</a>
     <?php else: ?>
-      <a href="<?= hs_base_url('auth/login.php') ?>">Login</a> ·
-      <a href="<?= hs_base_url('auth/register.php') ?>">Register</a>
+      <a href="<?= hs_login_url() ?>">Login</a> ·
+      <a href="<?= hs_register_url() ?>">Register</a>
     <?php endif; ?>
   </div>
 </header>
@@ -689,7 +689,7 @@
                   · <?= strtoupper(htmlspecialchars($hero['region'])) ?>
                 <?php endif; ?>
               </div>
-              <h1 class="hero-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($hero['slug'])) ?>"><?= htmlspecialchars($hero['title']) ?></a></h1>
+              <h1 class="hero-title"><a href="<?= hs_news_url($hero['slug']) ?>"><?= htmlspecialchars($hero['title']) ?></a></h1>
               <div class="hero-meta">
                 <?= hs_post_date($hero) ?>
               </div>
@@ -700,7 +700,7 @@
               <?php else: ?>
                 <?php foreach ($hero_list as $f): ?>
                   <div class="hero-list-item">
-                    <div class="hero-list-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($f['slug'])) ?>"><?= htmlspecialchars($f['title']) ?></a></div>
+                    <div class="hero-list-title"><a href="<?= hs_news_url($f['slug']) ?>"><?= htmlspecialchars($f['title']) ?></a></div>
                     <div class="hero-list-meta">
                       <?= htmlspecialchars($f['category_name'] ?: 'News') ?> · <?= hs_post_date($f) ?>
                     </div>
@@ -726,7 +726,7 @@
           <div class="region-block" id="india">
             <div class="region-header">
               <span>India</span>
-              <span><a href="<?= hs_base_url('category.php?slug=india') ?>" style="color:#FACC15;">View All</a></span>
+              <span><a href="<?= hs_category_url('india') ?>" style="color:#FACC15;">View All</a></span>
             </div>
             <?php if (empty($india_posts)): ?>
               <div style="font-size:11px; color:#9CA3AF;">No India posts yet.</div>
@@ -734,7 +734,7 @@
               <ul class="region-post-list">
                 <?php foreach (array_slice($india_posts, 0, 4) as $p): ?>
                   <li>
-                    <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                    <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                                         <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -750,7 +750,7 @@
           <div class="region-block" id="gcc">
             <div class="region-header">
               <span>GCC</span>
-              <span><a href="<?= hs_base_url('category.php?slug=gcc') ?>" style="color:#FACC15;">View All</a></span>
+              <span><a href="<?= hs_category_url('gcc') ?>" style="color:#FACC15;">View All</a></span>
             </div>
             <?php if (empty($gcc_posts)): ?>
               <div style="font-size:11px; color:#9CA3AF;">No GCC posts yet.</div>
@@ -758,7 +758,7 @@
               <ul class="region-post-list">
                 <?php foreach (array_slice($gcc_posts, 0, 4) as $p): ?>
                   <li>
-                    <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                    <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                                         <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -774,7 +774,7 @@
           <div class="region-block" id="kerala">
             <div class="region-header">
               <span>Kerala</span>
-              <span><a href="<?= hs_base_url('category.php?slug=kerala') ?>" style="color:#FACC15;">View All</a></span>
+              <span><a href="<?= hs_category_url('kerala') ?>" style="color:#FACC15;">View All</a></span>
             </div>
             <?php if (empty($kerala_posts)): ?>
               <div style="font-size:11px; color:#9CA3AF;">No Kerala posts yet.</div>
@@ -782,7 +782,7 @@
               <ul class="region-post-list">
                 <?php foreach (array_slice($kerala_posts, 0, 4) as $p): ?>
                   <li>
-                    <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                    <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                                         <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -800,7 +800,7 @@
           <div class="region-block" id="world">
             <div class="region-header">
               <span>World</span>
-              <span><a href="<?= hs_base_url('category.php?slug=world') ?>" style="color:#FACC15;">View All</a></span>
+              <span><a href="<?= hs_category_url('world') ?>" style="color:#FACC15;">View All</a></span>
             </div>
             <?php if (empty($world_posts)): ?>
               <div style="font-size:11px; color:#9CA3AF;">No World posts yet.</div>
@@ -808,7 +808,7 @@
               <ul class="region-post-list">
                 <?php foreach (array_slice($world_posts, 0, 4) as $p): ?>
                   <li>
-                    <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                    <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                                         <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -824,7 +824,7 @@
           <div class="region-block" id="sports">
             <div class="region-header">
               <span>Sports</span>
-              <span><a href="<?= hs_base_url('category.php?slug=sports') ?>" style="color:#FACC15;">View All</a></span>
+              <span><a href="<?= hs_category_url('sports') ?>" style="color:#FACC15;">View All</a></span>
             </div>
             <?php if (empty($sports_posts)): ?>
               <div style="font-size:11px; color:#9CA3AF;">No Sports posts yet.</div>
@@ -832,7 +832,7 @@
               <ul class="region-post-list">
                 <?php foreach (array_slice($sports_posts, 0, 4) as $p): ?>
                   <li>
-                    <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                    <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                                         <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -856,7 +856,7 @@
               <ul class="region-post-list">
                 <?php foreach (array_slice($posts, 0, 4) as $p): ?>
                   <li>
-                    <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                    <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                                         <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -874,7 +874,7 @@
         <div class="region-block" id="entertainment">
           <div class="region-header">
             <span>Entertainment</span>
-            <span><a href="<?= hs_base_url('category.php?slug=entertainment') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('entertainment') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($entertainment_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No entertainment posts yet.</div>
@@ -882,7 +882,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($entertainment_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -898,7 +898,7 @@
         <div class="region-block" id="business">
           <div class="region-header">
             <span>Business</span>
-            <span><a href="<?= hs_base_url('category.php?slug=business') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('business') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($business_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No business posts yet.</div>
@@ -906,7 +906,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($business_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -922,7 +922,7 @@
         <div class="region-block" id="technology">
           <div class="region-header">
             <span>Technology</span>
-            <span><a href="<?= hs_base_url('category.php?slug=technology') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('technology') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($technology_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No technology posts yet.</div>
@@ -930,7 +930,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($technology_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -946,7 +946,7 @@
         <div class="region-block" id="lifestyle">
           <div class="region-header">
             <span>Lifestyle</span>
-            <span><a href="<?= hs_base_url('category.php?slug=lifestyle') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('lifestyle') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($lifestyle_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No lifestyle posts yet.</div>
@@ -954,7 +954,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($lifestyle_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -972,7 +972,7 @@
         <div class="region-block" id="health">
           <div class="region-header">
             <span>Health</span>
-            <span><a href="<?= hs_base_url('category.php?slug=health') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('health') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($health_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No health posts yet.</div>
@@ -980,7 +980,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($health_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -996,7 +996,7 @@
         <div class="region-block" id="travel">
           <div class="region-header">
             <span>Travel</span>
-            <span><a href="<?= hs_base_url('category.php?slug=travel') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('travel') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($travel_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No travel posts yet.</div>
@@ -1004,7 +1004,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($travel_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -1020,7 +1020,7 @@
         <div class="region-block" id="auto">
           <div class="region-header">
             <span>Auto</span>
-            <span><a href="<?= hs_base_url('category.php?slug=auto') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('auto') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($auto_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No auto posts yet.</div>
@@ -1028,7 +1028,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($auto_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -1044,7 +1044,7 @@
         <div class="region-block" id="opinion">
           <div class="region-header">
             <span>Opinion</span>
-            <span><a href="<?= hs_base_url('category.php?slug=opinion') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('opinion') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($opinion_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No opinion posts yet.</div>
@@ -1052,7 +1052,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($opinion_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -1069,7 +1069,7 @@
         <div class="region-block" id="politics">
           <div class="region-header">
             <span>Politics</span>
-            <span><a href="<?= hs_base_url('category.php?slug=politics') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('politics') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($politics_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No politics posts yet.</div>
@@ -1077,7 +1077,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($politics_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -1093,7 +1093,7 @@
         <div class="region-block" id="crime">
           <div class="region-header">
             <span>Crime</span>
-            <span><a href="<?= hs_base_url('category.php?slug=crime') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('crime') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($crime_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No crime posts yet.</div>
@@ -1101,7 +1101,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($crime_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -1117,7 +1117,7 @@
         <div class="region-block" id="education">
           <div class="region-header">
             <span>Education</span>
-            <span><a href="<?= hs_base_url('category.php?slug=education') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('education') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($education_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No education posts yet.</div>
@@ -1125,7 +1125,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($education_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -1141,7 +1141,7 @@
         <div class="region-block" id="religion">
           <div class="region-header">
             <span>Religion</span>
-            <span><a href="<?= hs_base_url('category.php?slug=religion') ?>" style="color:#FACC15;">View All</a></span>
+            <span><a href="<?= hs_category_url('religion') ?>" style="color:#FACC15;">View All</a></span>
           </div>
           <?php if (empty($religion_posts)): ?>
             <div style="font-size:11px; color:#9CA3AF;">No religion posts yet.</div>
@@ -1149,7 +1149,7 @@
             <ul class="region-post-list">
               <?php foreach (array_slice($religion_posts, 0, 3) as $p): ?>
                 <li>
-                  <div class="region-post-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($p['slug'])) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                  <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
                   <?php if (!empty($p['image_main'])): ?>
                     <div class="region-thumb">
                       <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
@@ -1191,7 +1191,7 @@
                   <img src="<?= hs_base_url($t['image_main']) ?>" alt="<?= htmlspecialchars($t['title']) ?>">
                 </div>
               <?php endif; ?>
-              <div class="trending-title"><a href="<?= hs_base_url('post.php?slug=' . urlencode($t['slug'])) ?>"><?= htmlspecialchars($t['title']) ?></a></div>
+              <div class="trending-title"><a href="<?= hs_news_url($t['slug']) ?>"><?= htmlspecialchars($t['title']) ?></a></div>
                 <div class="trending-meta">
                   <?= htmlspecialchars($t['category_name'] ?: 'News') ?><br>
                   <?= hs_post_date($t) ?>
@@ -1213,7 +1213,7 @@
               <li>
                 <div class="video-thumb">▶</div>
                 <div class="video-text">
-                  <div><a href="<?= hs_base_url('post.php?slug=' . urlencode($v['slug'])) ?>"><?= htmlspecialchars($v['title']) ?></a></div>
+                  <div><a href="<?= hs_news_url($v['slug']) ?>"><?= htmlspecialchars($v['title']) ?></a></div>
                   <div style="font-size:10px; color:#9CA3AF;"><?= htmlspecialchars($v['category_name'] ?: 'Video') ?></div>
                 </div>
               </li>
@@ -1233,7 +1233,7 @@
               <li>
                 <div class="gallery-thumb">🖼</div>
                 <div class="gallery-text">
-                  <div><a href="<?= hs_base_url('post.php?slug=' . urlencode($g['slug'])) ?>"><?= htmlspecialchars($g['title']) ?></a></div>
+                  <div><a href="<?= hs_news_url($g['slug']) ?>"><?= htmlspecialchars($g['title']) ?></a></div>
                   <div style="font-size:10px; color:#9CA3AF;"><?= htmlspecialchars($g['category_name'] ?: 'Gallery') ?></div>
                 </div>
               </li>
