@@ -35,6 +35,7 @@ $settings = hs_settings();
     <a href="<?= hs_base_url('admin/index.php') ?>">Dashboard</a>
     <a href="<?= hs_base_url('admin/content/index.php') ?>">Content</a>
     <a href="<?= hs_base_url('admin/homepage.php') ?>">Homepage</a>
+    <a href="<?= hs_base_url('admin/settings.php') ?>">Site Settings</a>
     <a href="<?= hs_base_url('admin/seo.php') ?>">SEO</a>
     <a href="<?= hs_base_url('admin/social.php') ?>">Social</a>
     <a href="<?= hs_base_url('admin/ads.php') ?>">Ads</a>

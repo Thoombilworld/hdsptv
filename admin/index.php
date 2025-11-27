@@ -32,6 +32,7 @@ $settings = hs_settings();
   <nav>
     <a href="<?= hs_base_url('admin/index.php') ?>">Dashboard</a>
     <a href="<?= hs_base_url('admin/homepage.php') ?>">Homepage</a>
+    <a href="<?= hs_base_url('admin/settings.php') ?>">Site Settings</a>
     <a href="<?= hs_base_url('admin/content/index.php') ?>">Content</a>
     <a href="<?= hs_base_url('admin/seo.php') ?>">SEO</a>
     <a href="<?= hs_base_url('admin/social.php') ?>">Social</a>
@@ -48,6 +49,12 @@ $settings = hs_settings();
       <h2>Articles & Categories</h2>
       <p>Integrate your content manager here (posts, categories, tags).</p>
       <a class="button" href="<?= hs_base_url('admin/content/index.php') ?>">Open Content Manager</a>
+    </section>
+    <section class="card">
+      <div class="pill">Branding</div>
+      <h2>Site Settings</h2>
+      <p>Control site title, tagline, default theme, and logo URL.</p>
+      <a class="button" href="<?= hs_base_url('admin/settings.php') ?>">Edit Site Settings</a>
     </section>
     <section class="card">
       <div class="pill">Homepage</div>

@@ -62,14 +62,18 @@ function hs_view($view, $data = []) {
     include __DIR__ . '/app/Views/' . $view . '.php';
 }
 
-function hs_settings() {
+function hs_settings($force_reload = false)
+{
     static $settings = null;
-    if ($settings !== null) return $settings;
+    if ($settings !== null && !$force_reload) {
+        return $settings;
+    }
 
     $settings = [
         'site_title' => HS_APP_NAME,
         'tagline'    => 'News for India, GCC, Kerala & the World',
         'logo'       => hs_base_url('assets/images/logo.png'),
+        'theme'      => 'dark',
     ];
 
     if (defined('HS_INSTALLED') && HS_INSTALLED) {
@@ -80,6 +84,7 @@ function hs_settings() {
             }
         }
     }
+
     return $settings;
 }
 

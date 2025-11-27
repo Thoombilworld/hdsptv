@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($stmt);
     }
     $msg = 'Social links updated.';
-    $settings = hs_settings();
+    $settings = hs_settings(true);
 }
 ?>
 <!doctype html>

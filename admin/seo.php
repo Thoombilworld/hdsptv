@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($stmt);
     }
     $msg = 'SEO settings updated.';
-    $settings = hs_settings(); // reload
+    $settings = hs_settings(true); // reload
 }
 ?>
 <!doctype html>

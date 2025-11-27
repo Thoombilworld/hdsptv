@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($stmt);
     }
     $msg = 'Homepage layout updated.';
-    $settings = hs_settings();
+    $settings = hs_settings(true);
 }
 function hp_checked($settings, $key) {
     return !empty($settings[$key]) && $settings[$key] === '1' ? 'checked' : '';
