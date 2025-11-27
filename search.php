@@ -261,6 +261,18 @@ $canonical = hs_base_url('search.php' . ($q !== '' ? ('?q=' . urlencode($q)) : '
       margin-top:4px;
     }
 
+    footer {
+      border-top:1px solid rgba(31,41,55,0.9);
+      padding:10px 18px 16px;
+      font-size:11px;
+      color:#9CA3AF;
+      text-align:center;
+      background:linear-gradient(180deg, rgba(15,23,42,0.98), #020617);
+    }
+    .footer-links { margin-bottom:6px; }
+    .footer-links a { color:#E5E7EB; }
+    .footer-links a:hover { color:#FACC15; text-decoration:none; }
+
     @media (max-width:900px) {
       .result-list {
         grid-template-columns:minmax(0,1fr);
@@ -375,6 +387,11 @@ $canonical = hs_base_url('search.php' . ($q !== '' ? ('?q=' . urlencode($q)) : '
     <?php endif; ?>
   </div>
 </main>
+
+<footer>
+  <div class="footer-links"><?= hs_footer_links_html(); ?></div>
+  <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
+</footer>
 
 </body>
 </html>

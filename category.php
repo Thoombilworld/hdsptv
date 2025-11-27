@@ -208,6 +208,9 @@ $canonical = hs_base_url('category.php?slug=' . urlencode($category['slug']));
       text-align:center;
       background:linear-gradient(180deg, rgba(15,23,42,0.98), #020617);
     }
+    .footer-links { margin-bottom:6px; }
+    .footer-links a { color:#E5E7EB; }
+    .footer-links a:hover { color:#FACC15; text-decoration:none; }
     @media (max-width:640px) {
       header { padding:8px 10px; }
       .page { padding:14px 8px 24px; }
@@ -287,7 +290,8 @@ $canonical = hs_base_url('category.php?slug=' . urlencode($category['slug']));
 </main>
 
 <footer>
-  © <?= date('Y') ?> NEWS HDSPTV. All rights reserved.
+  <div class="footer-links"><?= hs_footer_links_html(); ?></div>
+  <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
 </footer>
 </body>
 </html>

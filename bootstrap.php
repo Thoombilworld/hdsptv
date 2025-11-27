@@ -107,3 +107,19 @@ function hs_require_user() {
         exit;
     }
 }
+
+function hs_footer_links_html()
+{
+    $links = [
+        ['href' => hs_base_url('terms'), 'label' => 'Terms & Conditions'],
+        ['href' => hs_base_url('privacy'), 'label' => 'Privacy Policy'],
+        ['href' => hs_base_url('contact'), 'label' => 'Contact'],
+    ];
+
+    $parts = [];
+    foreach ($links as $link) {
+        $parts[] = '<a href="' . $link['href'] . '">' . htmlspecialchars($link['label']) . '</a>';
+    }
+
+    return implode(' · ', $parts);
+}

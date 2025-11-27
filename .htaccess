@@ -37,6 +37,13 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^dashboard/?$ user/dashboard.php [L,QSA]
 RewriteRule ^account/?$ user/dashboard.php [L,QSA]
 
+# Static pages
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^terms/?$ terms.php [L,QSA]
+RewriteRule ^privacy/?$ privacy.php [L,QSA]
+RewriteRule ^contact/?$ contact.php [L,QSA]
+
 </IfModule>
 
 Options -Indexes
