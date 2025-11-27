@@ -471,9 +471,20 @@ if (!empty($post['image_main'])) {
   </div>
 </header>
 
+<?php if ($ad = hs_ad('global_header')): ?>
+  <div class="ads-slot ads-top">
+    <?= hs_render_ad($ad) ?>
+  </div>
+<?php endif; ?>
+
 <main class="page">
   <div class="layout-article">
     <article class="article-card">
+      <?php if ($ad = hs_ad('article_top')): ?>
+        <div class="ads-slot ads-inline">
+          <?= hs_render_ad($ad) ?>
+        </div>
+      <?php endif; ?>
       <?php if (!empty($post['image_main'])): ?>
         <div class="article-hero-image">
           <img src="<?= hs_base_url($post['image_main']) ?>" alt="<?= htmlspecialchars($post['title']) ?>">
@@ -512,6 +523,12 @@ if (!empty($post['image_main'])) {
             <p>No content.</p>
           <?php endif; ?>
         </div>
+
+        <?php if ($ad = hs_ad('article_inline')): ?>
+          <div class="ads-slot ads-inline">
+            <?= hs_render_ad($ad) ?>
+          </div>
+        <?php endif; ?>
 
         <?php if (!empty($tags)): ?>
           <div class="article-tags">
@@ -575,11 +592,32 @@ if (!empty($post['image_main'])) {
           <a href="<?= hs_base_url('index.php') ?>" style="color:#FACC15;">← Back to homepage</a>
         </p>
       </section>
+
+      <?php if ($ad = hs_ad('article_sidebar')): ?>
+        <section class="sidebar-card">
+          <div class="sidebar-title">Sponsored</div>
+          <div class="ads-slot">
+            <?= hs_render_ad($ad) ?>
+          </div>
+        </section>
+      <?php elseif ($ad = hs_ad('global_sidebar')): ?>
+        <section class="sidebar-card">
+          <div class="sidebar-title">Sponsored</div>
+          <div class="ads-slot">
+            <?= hs_render_ad($ad) ?>
+          </div>
+        </section>
+      <?php endif; ?>
     </aside>
   </div>
 </main>
 
 <footer>
+  <?php if ($ad = hs_ad('global_footer')): ?>
+    <div class="ads-slot">
+      <?= hs_render_ad($ad) ?>
+    </div>
+  <?php endif; ?>
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
   <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
 </footer>

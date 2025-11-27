@@ -4,6 +4,7 @@ hs_require_admin();
 $db = hs_db();
 $msg = '';
 $error = '';
+$slotLabels = hs_ad_slots_catalog();
 
 if (isset($_GET['delete'])) {
     $delId = (int) $_GET['delete'];
@@ -82,11 +83,13 @@ $ads = $res ? mysqli_fetch_all($res, MYSQLI_ASSOC) : [];
   <form method="post">
     <input type="hidden" name="id" value="<?= $editing['id'] ?? 0 ?>">
     <label>Slot</label>
-    <select name="slot">
-      <option value="homepage_top" <?= (($editing['slot'] ?? '') === 'homepage_top') ? 'selected' : '' ?>>Homepage Top</option>
-      <option value="homepage_right" <?= (($editing['slot'] ?? '') === 'homepage_right') ? 'selected' : '' ?>>Homepage Right Sidebar</option>
-      <option value="homepage_inline" <?= (($editing['slot'] ?? '') === 'homepage_inline') ? 'selected' : '' ?>>Homepage Inline</option>
-    </select>
+    <input list="ad-slots" name="slot" value="<?= htmlspecialchars($editing['slot'] ?? 'homepage_top') ?>" placeholder="e.g. homepage_top" required>
+    <datalist id="ad-slots">
+      <?php foreach ($slotLabels as $slotKey => $slotName): ?>
+        <option value="<?= htmlspecialchars($slotKey) ?>" label="<?= htmlspecialchars($slotName) ?>">
+      <?php endforeach; ?>
+    </datalist>
+    <small>Pick a suggested slot or type a custom key you can reference in templates.</small>
 
     <label>Ad Image URL (uploaded path)</label>
     <input type="text" name="image_url" value="<?= htmlspecialchars($editing['image_url'] ?? '') ?>">
@@ -107,7 +110,10 @@ $ads = $res ? mysqli_fetch_all($res, MYSQLI_ASSOC) : [];
     <tr><th>Slot</th><th>Image</th><th>Link</th><th>Status</th><th>Actions</th></tr>
     <?php foreach ($ads as $ad): ?>
       <tr>
-        <td><?= htmlspecialchars($ad['slot']) ?></td>
+        <td>
+          <div><?= htmlspecialchars($slotLabels[$ad['slot']] ?? ucfirst(str_replace('_',' ', $ad['slot']))) ?></div>
+          <div style="font-size:12px;color:#6B7280;">Key: <?= htmlspecialchars($ad['slot']) ?></div>
+        </td>
         <td><?= htmlspecialchars($ad['image_url']) ?></td>
         <td><?= htmlspecialchars($ad['link_url']) ?></td>
         <td><?= !empty($ad['active']) ? 'Active' : 'Hidden' ?></td>

@@ -27,6 +27,11 @@ video, iframe { max-width:100%; }
   .stack-mobile { flex-direction:column; }
 }
 
+.ads-slot { margin:12px 0; padding:12px; border:1px solid var(--hs-border-subtle, #E5E7EB); border-radius:12px; background: var(--hs-card-bg, #FFFFFF); box-shadow: 0 8px 24px rgba(0,0,0,0.08); text-align:center; }
+.ads-slot img { max-width:100%; height:auto; border-radius:10px; }
+.ads-slot.ads-top { margin-top:16px; }
+.ads-slot.ads-inline { margin:18px 0; }
+
 .responsive-table { width:100%; border-collapse:collapse; }
 .responsive-table th, .responsive-table td { padding:8px 10px; text-align:left; }
 .responsive-table thead { background:#0B1120; color:#E5E7EB; }

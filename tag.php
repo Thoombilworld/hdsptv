@@ -252,19 +252,31 @@ $canonical = hs_tag_url($tag['slug']);
     <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
     <button type="submit">Search</button>
   </form>
-</header>
+  </header>
 
-<main class="page">
-  <div class="layout-tag">
-    <div class="tag-header">
-      <div class="tag-title">#<?= htmlspecialchars($tag['name']) ?></div>
-      <div class="tag-sub">Articles with this tag</div>
+  <?php if ($ad = hs_ad('global_header')): ?>
+    <div class="ads-slot ads-top">
+      <?= hs_render_ad($ad) ?>
     </div>
+  <?php endif; ?>
 
-    <?php if (empty($posts)): ?>
-      <p>No posts with this tag yet.</p>
-    <?php else: ?>
-      <div class="card-grid">
+  <main class="page">
+    <div class="layout-tag">
+      <div class="tag-header">
+        <div class="tag-title">#<?= htmlspecialchars($tag['name']) ?></div>
+        <div class="tag-sub">Articles with this tag</div>
+      </div>
+
+      <?php if ($ad = hs_ad('tag_top')): ?>
+        <div class="ads-slot ads-top">
+          <?= hs_render_ad($ad) ?>
+        </div>
+      <?php endif; ?>
+
+      <?php if (empty($posts)): ?>
+        <p>No posts with this tag yet.</p>
+      <?php else: ?>
+        <div class="card-grid">
         <?php foreach ($posts as $p): ?>
           <article class="news-card">
             <?php if (!empty($p['image_main'])): ?>
@@ -286,13 +298,28 @@ $canonical = hs_tag_url($tag['slug']);
           </article>
         <?php endforeach; ?>
       </div>
-    <?php endif; ?>
-  </div>
-</main>
 
-<footer>
-  <div class="footer-links"><?= hs_footer_links_html(); ?></div>
-  <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
-</footer>
+      <?php if ($ad = hs_ad('tag_inline')): ?>
+        <div class="ads-slot ads-inline">
+          <?= hs_render_ad($ad) ?>
+        </div>
+      <?php elseif ($ad = hs_ad('global_sidebar')): ?>
+        <div class="ads-slot ads-inline">
+          <?= hs_render_ad($ad) ?>
+        </div>
+      <?php endif; ?>
+      <?php endif; ?>
+    </div>
+  </main>
+
+  <footer>
+    <?php if ($ad = hs_ad('global_footer')): ?>
+      <div class="ads-slot">
+        <?= hs_render_ad($ad) ?>
+      </div>
+    <?php endif; ?>
+    <div class="footer-links"><?= hs_footer_links_html(); ?></div>
+    <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
+  </footer>
 </body>
 </html>

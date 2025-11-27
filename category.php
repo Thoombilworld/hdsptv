@@ -294,12 +294,24 @@ $canonical = hs_category_url($category['slug']);
   </div>
 </header>
 
+<?php if ($ad = hs_ad('global_header')): ?>
+  <div class="ads-slot ads-top">
+    <?= hs_render_ad($ad) ?>
+  </div>
+<?php endif; ?>
+
 <main class="page">
   <div class="layout-category">
     <div class="category-header">
       <div class="category-title"><?= htmlspecialchars($category['name']) ?></div>
       <div class="category-sub">Latest stories from <?= htmlspecialchars($category['name']) ?></div>
     </div>
+
+    <?php if ($ad = hs_ad('category_top')): ?>
+      <div class="ads-slot ads-top">
+        <?= hs_render_ad($ad) ?>
+      </div>
+    <?php endif; ?>
 
     <?php if (empty($posts)): ?>
       <p>No posts in this category yet.</p>
@@ -326,11 +338,26 @@ $canonical = hs_category_url($category['slug']);
           </article>
         <?php endforeach; ?>
       </div>
+
+      <?php if ($ad = hs_ad('category_inline')): ?>
+        <div class="ads-slot ads-inline">
+          <?= hs_render_ad($ad) ?>
+        </div>
+      <?php elseif ($ad = hs_ad('global_sidebar')): ?>
+        <div class="ads-slot ads-inline">
+          <?= hs_render_ad($ad) ?>
+        </div>
+      <?php endif; ?>
     <?php endif; ?>
   </div>
 </main>
 
 <footer>
+  <?php if ($ad = hs_ad('global_footer')): ?>
+    <div class="ads-slot">
+      <?= hs_render_ad($ad) ?>
+    </div>
+  <?php endif; ?>
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
   <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
 </footer>

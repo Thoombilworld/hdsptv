@@ -342,6 +342,12 @@ $canonical = hs_search_url($q);
   </div>
 </header>
 
+<?php if ($ad = hs_ad('global_header')): ?>
+  <div class="ads-slot ads-top">
+    <?= hs_render_ad($ad) ?>
+  </div>
+<?php endif; ?>
+
 <main class="page">
   <div class="layout-search">
     <div class="search-header">
@@ -354,6 +360,12 @@ $canonical = hs_search_url($q);
         <?php endif; ?>
       </div>
     </div>
+
+    <?php if ($ad = hs_ad('search_top')): ?>
+      <div class="ads-slot ads-top">
+        <?= hs_render_ad($ad) ?>
+      </div>
+    <?php endif; ?>
 
     <?php if ($q !== '' && !empty($posts)): ?>
       <div class="result-list">
@@ -386,6 +398,16 @@ $canonical = hs_search_url($q);
           </article>
         <?php endforeach; ?>
       </div>
+
+      <?php if ($ad = hs_ad('search_inline')): ?>
+        <div class="ads-slot ads-inline">
+          <?= hs_render_ad($ad) ?>
+        </div>
+      <?php elseif ($ad = hs_ad('global_sidebar')): ?>
+        <div class="ads-slot ads-inline">
+          <?= hs_render_ad($ad) ?>
+        </div>
+      <?php endif; ?>
     <?php elseif ($q !== ''): ?>
       <p>No results found.</p>
     <?php endif; ?>
@@ -393,6 +415,11 @@ $canonical = hs_search_url($q);
 </main>
 
 <footer>
+  <?php if ($ad = hs_ad('global_footer')): ?>
+    <div class="ads-slot">
+      <?= hs_render_ad($ad) ?>
+    </div>
+  <?php endif; ?>
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
   <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
 </footer>

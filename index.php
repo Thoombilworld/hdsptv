@@ -58,12 +58,7 @@ if (defined('HS_INSTALLED') && HS_INSTALLED) {
                               LIMIT 6");
     if ($res) while ($r = mysqli_fetch_assoc($res)) $gallery_posts[] = $r;
 
-    $res = mysqli_query($db, "SELECT * FROM hs_ads WHERE active = 1");
-    if ($res) {
-        while ($row = mysqli_fetch_assoc($res)) {
-            $ads[$row['slot']] = $row;
-        }
-    }
+    $ads = hs_active_ads();
 }
 
 hs_view('frontend/home', [

@@ -117,9 +117,24 @@ CREATE TABLE IF NOT EXISTS hs_ads (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO hs_ads (slot, image_url, link_url) VALUES
+('global_header','',''),
+('global_sidebar','',''),
 ('homepage_top','',''),
 ('homepage_right','',''),
-('homepage_inline','','')
+('homepage_inline','', ''),
+('article_top','',''),
+('article_inline','', ''),
+('article_sidebar','', ''),
+('category_top','',''),
+('category_inline','', ''),
+('category_sidebar','', ''),
+('search_top','', ''),
+('search_inline','', ''),
+('search_sidebar','', ''),
+('tag_top','', ''),
+('tag_inline','', ''),
+('tag_sidebar','', ''),
+('global_footer','', '')
 ON DUPLICATE KEY UPDATE image_url=VALUES(image_url), link_url=VALUES(link_url);
 
 CREATE TABLE IF NOT EXISTS hs_tags (

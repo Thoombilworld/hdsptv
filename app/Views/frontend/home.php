@@ -1,27 +1,12 @@
 <?php
   $theme = hs_current_theme();
   $palette = hs_theme_palette($theme);
-  $ads = $ads ?? [];
-  $ad_for = function ($slot) use ($ads) {
-      return $ads[$slot] ?? null;
+  $ad_for = function ($slot) {
+      return hs_ad($slot);
   };
 
   $languageCode = hs_current_language_code();
 
-  function hs_render_ad($ad) {
-      if (!$ad) return '';
-      if (!empty($ad['code'])) {
-          return $ad['code'];
-      }
-      if (!empty($ad['image_url'])) {
-          $img = '<img src="' . hs_base_url($ad['image_url']) . '" alt="Advertisement">';
-          if (!empty($ad['link_url'])) {
-              return '<a href="' . htmlspecialchars($ad['link_url']) . '" target="_blank" rel="noopener">' . $img . '</a>';
-          }
-          return $img;
-      }
-      return '';
-  }
 ?>
 <!doctype html>
 <html lang="<?= htmlspecialchars($languageCode) ?>">
@@ -677,7 +662,8 @@
   </div>
 </header>
 
-<?php if ($topAd = $ad_for('homepage_top')): ?>
+<?php $topAd = $ad_for('homepage_top') ?? hs_ad('global_header'); ?>
+<?php if ($topAd): ?>
   <div class="ads-slot ads-top">
     <?= hs_render_ad($topAd) ?>
   </div>

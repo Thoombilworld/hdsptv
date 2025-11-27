@@ -187,6 +187,74 @@ function hs_settings($force_reload = false)
     return $settings;
 }
 
+function hs_active_ads()
+{
+    static $ads = null;
+    if ($ads !== null) {
+        return $ads;
+    }
+
+    $ads = [];
+    if (!defined('HS_INSTALLED') || !HS_INSTALLED) {
+        return $ads;
+    }
+
+    $res = mysqli_query(hs_db(), "SELECT * FROM hs_ads WHERE active = 1");
+    if ($res) {
+        while ($row = mysqli_fetch_assoc($res)) {
+            $ads[$row['slot']] = $row;
+        }
+    }
+
+    return $ads;
+}
+
+function hs_ad($slot)
+{
+    $ads = hs_active_ads();
+    return $ads[$slot] ?? null;
+}
+
+function hs_render_ad($ad)
+{
+    if (!$ad) return '';
+    if (!empty($ad['code'])) {
+        return $ad['code'];
+    }
+    if (!empty($ad['image_url'])) {
+        $img = '<img src="' . hs_base_url($ad['image_url']) . '" alt="Advertisement">';
+        if (!empty($ad['link_url'])) {
+            return '<a href="' . htmlspecialchars($ad['link_url']) . '" target="_blank" rel="noopener">' . $img . '</a>';
+        }
+        return $img;
+    }
+    return '';
+}
+
+function hs_ad_slots_catalog()
+{
+    return [
+        'global_header'   => 'Global Header (all pages)',
+        'global_sidebar'  => 'Global Sidebar',
+        'global_footer'   => 'Global Footer',
+        'homepage_top'    => 'Homepage Top',
+        'homepage_inline' => 'Homepage Inline',
+        'homepage_right'  => 'Homepage Right Sidebar',
+        'article_top'     => 'Article Top',
+        'article_inline'  => 'Article Inline',
+        'article_sidebar' => 'Article Sidebar',
+        'category_top'    => 'Category Top',
+        'category_inline' => 'Category Inline',
+        'category_sidebar'=> 'Category Sidebar',
+        'search_top'      => 'Search Top',
+        'search_inline'   => 'Search Inline',
+        'search_sidebar'  => 'Search Sidebar',
+        'tag_top'         => 'Tag Top',
+        'tag_inline'      => 'Tag Inline',
+        'tag_sidebar'     => 'Tag Sidebar',
+    ];
+}
+
 // Admin auth helpers
 function hs_is_admin_logged_in() {
     return !empty($_SESSION['hs_admin_id']);
