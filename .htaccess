@@ -1,0 +1,36 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# Clean article URL: /news/slug
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^news/([^/]+)/?$ post.php?slug=$1 [L,QSA]
+
+# Category page: /category/slug or /c/slug
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^category/([^/]+)/?$ category.php?slug=$1 [L,QSA]
+RewriteRule ^c/([^/]+)/?$ category.php?slug=$1 [L,QSA]
+
+# Tag page: /tag/slug
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^tag/([^/]+)/?$ tag.php?slug=$1 [L,QSA]
+
+# Search page: /search?q=...
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^search/?$ search.php [L,QSA]
+
+# Auth routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^login/?$ auth/login.php [L,QSA]
+RewriteRule ^register/?$ auth/register.php [L,QSA]
+RewriteRule ^forgot-password/?$ auth/forgot.php [L,QSA]
+RewriteRule ^reset-password/?$ auth/reset.php [L,QSA]
+
+</IfModule>
+
+Options -Indexes
