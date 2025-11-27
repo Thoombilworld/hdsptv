@@ -73,6 +73,38 @@ function hs_primary_nav_items()
     ];
 }
 
+function hs_supported_languages()
+{
+    return [
+        'en' => 'English',
+        'ar' => 'العربية',
+        'ml' => 'മലയാളം',
+    ];
+}
+
+function hs_current_language_code()
+{
+    $supported = hs_supported_languages();
+    $requested = strtolower(trim($_GET['lang'] ?? ''));
+    if ($requested !== '' && isset($supported[$requested])) {
+        $_SESSION['hs_lang'] = $requested;
+    }
+
+    $selected = $_SESSION['hs_lang'] ?? array_key_first($supported);
+    if (!isset($supported[$selected])) {
+        $selected = array_key_first($supported);
+    }
+
+    return $selected;
+}
+
+function hs_current_language_label()
+{
+    $supported = hs_supported_languages();
+    $code = hs_current_language_code();
+    return $supported[$code] ?? 'English';
+}
+
 function hs_current_theme()
 {
     static $theme = null;

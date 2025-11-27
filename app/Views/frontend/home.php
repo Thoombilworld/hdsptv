@@ -6,6 +6,8 @@
       return $ads[$slot] ?? null;
   };
 
+  $languageCode = hs_current_language_code();
+
   function hs_render_ad($ad) {
       if (!$ad) return '';
       if (!empty($ad['code'])) {
@@ -22,7 +24,7 @@
   }
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($languageCode) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?></title>
@@ -62,11 +64,17 @@
       backdrop-filter: blur(18px);
       background: linear-gradient(90deg, rgba(15,23,42,0.92), rgba(15,23,42,0.96));
       border-bottom: 1px solid var(--hs-border);
-      padding: 10px 18px;
-      display:grid;
-      grid-template-columns:auto 1fr;
-      gap:12px;
-      align-items:center;
+      padding: 10px 0;
+    }
+
+    .header-inner {
+      width: min(1280px, 100% - 20px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 0 10px;
     }
 
     .top-left {
@@ -117,11 +125,11 @@
     }
 
     .header-right {
-      display:flex;
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items:center;
       gap:12px;
       justify-content:flex-end;
-      flex-wrap:wrap;
     }
 
     .nav-main {
@@ -140,39 +148,55 @@
     }
     .nav-main a:hover { background:rgba(15,23,42,0.8); color:#FACC15; text-decoration:none; }
 
-    .nav-search { margin-left:auto; margin-right:12px; margin-top:4px; }
+    .nav-utilities {
+      width:100%;
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items:center;
+      gap:10px;
+    }
+
+    .nav-search { margin:0; }
     .nav-search input[type="text"] {
-      padding:6px 12px;
-      border-radius:999px;
+      padding:10px 14px;
+      border-radius:12px;
       border:1px solid rgba(148,163,184,0.9);
-      font-size:12px;
+      font-size:13px;
       background:#FFFFFF;
       color:#111827;
-      min-width:200px;
+      width:100%;
+      min-width:240px;
     }
     .nav-search input[type="text"]::placeholder { color:#9CA3AF; }
     .nav-search button { display:none; }
 
-    .language-switcher { min-width:120px; padding:6px 10px; border-radius:10px; border:1px solid rgba(148,163,184,0.5); background:#0B1120; color:#E5E7EB; }
+    .language-form { display:flex; align-items:center; gap:6px; }
+    .language-switcher { min-width:140px; padding:9px 10px; border-radius:10px; border:1px solid rgba(148,163,184,0.5); background:#0B1120; color:#E5E7EB; }
+    .language-label { font-size:11px; color:#E5E7EB; opacity:0.75; }
 
     .user-bar { font-size:11px; color:#E5E7EB; text-align:right; }
     .user-bar a { color:#FACC15; }
 
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+
     @media (max-width:960px) {
-      header { grid-template-columns:1fr auto; align-items:flex-start; }
+      .header-inner { grid-template-columns:1fr auto; align-items:flex-start; }
       .nav-toggle { display:inline-flex; }
-      .header-right { width:100%; display:none; flex-direction:column; align-items:flex-start; }
-      header.nav-open .header-right { display:flex; }
+      .header-right { width:100%; display:none; grid-template-columns:1fr; }
+      header.nav-open .header-right { display:flex; flex-direction:column; align-items:flex-start; }
       .nav-main { width:100%; flex-direction:column; align-items:flex-start; }
       .nav-main a { width:100%; padding:10px; border-radius:12px; background:rgba(15,23,42,0.65); }
+      .nav-utilities { width:100%; grid-template-columns:1fr; }
       .nav-search { width:100%; margin:0; }
       .nav-search input[type="text"] { width:100%; }
-      .user-bar { width:100%; text-align:left; }
+      .language-form { width:100%; }
       .language-switcher { width:100%; }
+      .user-bar { width:100%; text-align:left; }
     }
 
     .page {
-      width:100%;
+      width:min(1280px, 100% - 20px);
+      margin:0 auto;
       min-height:100vh;
     }
 
@@ -180,7 +204,7 @@
       display:grid;
       grid-template-columns: minmax(0,3.2fr) minmax(0,2fr);
       gap:14px;
-      padding:12px 18px 28px;
+      padding:12px 0 28px;
     }
 
     @media (max-width:1080px) {
@@ -602,44 +626,53 @@
   }
 ?>
 <header>
-  <div class="top-left">
-    <a href="<?= hs_base_url('index.php') ?>" class="logo-link">
-      <div class="logo-mark">H</div>
-      <div class="logo-text">
-      <div class="logo-text-main">NEWS HDSPTV</div>
-      <div class="logo-text-tag"><?= htmlspecialchars($settings['tagline'] ?? 'GCC • INDIA • KERALA • WORLD') ?></div>
-      </div>
-    </a>
-  </div>
-  <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-  <div class="header-right">
-    <nav class="nav-main">
-      <?php foreach (hs_primary_nav_items() as $item): ?>
-        <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars($item['label']) ?></a>
-      <?php endforeach; ?>
-    </nav>
-    <div class="nav-utilities stack-mobile" style="align-items:flex-start; width:100%;">
-      <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
-        <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
-        <button type="submit">Search</button>
-      </form>
-      <select class="language-switcher" aria-label="Language">
-        <option>English</option>
-        <option>العربية</option>
-        <option>മലയാളം</option>
-      </select>
+  <div class="header-inner">
+    <div class="top-left">
+      <a href="<?= hs_base_url('index.php') ?>" class="logo-link">
+        <div class="logo-mark">H</div>
+        <div class="logo-text">
+        <div class="logo-text-main">NEWS HDSPTV</div>
+        <div class="logo-text-tag"><?= htmlspecialchars($settings['tagline'] ?? 'GCC • INDIA • KERALA • WORLD') ?></div>
+        </div>
+      </a>
     </div>
-    <div class="user-bar">
-      <?php $u = hs_current_user(); ?>
-      <?php if ($u): ?>
-        <?= htmlspecialchars($u['name']) ?>
-        <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
-        · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
-        · <a href="<?= hs_logout_url() ?>">Logout</a>
-      <?php else: ?>
-        <a href="<?= hs_login_url() ?>">Login</a> ·
-        <a href="<?= hs_register_url() ?>">Register</a>
-      <?php endif; ?>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <div class="header-right">
+      <nav class="nav-main">
+        <?php foreach (hs_primary_nav_items() as $item): ?>
+          <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars($item['label']) ?></a>
+        <?php endforeach; ?>
+      </nav>
+      <div class="nav-utilities stack-mobile">
+        <form class="nav-search" action="<?= hs_search_url() ?>" method="get" data-testid="nav-search-form">
+          <label class="sr-only" for="nav-search">Search</label>
+          <input id="nav-search" type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>" data-testid="nav-search-input">
+          <button type="submit">Search</button>
+        </form>
+        <form class="language-form" method="get" action="">
+          <label class="language-label" for="language-select">Language</label>
+          <select id="language-select" class="language-switcher" name="lang" aria-label="Language" onchange="this.form.submit()" data-testid="language-switcher">
+            <?php foreach (hs_supported_languages() as $code => $label): ?>
+              <option value="<?= htmlspecialchars($code) ?>" <?= $languageCode === $code ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+            <?php endforeach; ?>
+          </select>
+          <?php foreach ($_GET as $key => $value): if ($key === 'lang') continue; ?>
+            <input type="hidden" name="<?= htmlspecialchars($key) ?>" value="<?= htmlspecialchars($value) ?>">
+          <?php endforeach; ?>
+        </form>
+      </div>
+      <div class="user-bar">
+        <?php $u = hs_current_user(); ?>
+        <?php if ($u): ?>
+          <?= htmlspecialchars($u['name']) ?>
+          <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
+          · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
+          · <a href="<?= hs_logout_url() ?>">Logout</a>
+        <?php else: ?>
+          <a href="<?= hs_login_url() ?>">Login</a> ·
+          <a href="<?= hs_register_url() ?>">Register</a>
+        <?php endif; ?>
+      </div>
     </div>
   </div>
 </header>
