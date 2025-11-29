@@ -746,6 +746,24 @@
   $education_posts     = [];
   $religion_posts      = [];
 
+  $gcc_country_blocks = [
+    'qatar'   => [],
+    'uae'     => [],
+    'saudi'   => [],
+    'oman'    => [],
+    'kuwait'  => [],
+    'bahrain' => [],
+  ];
+
+  $gcc_country_labels = [
+    'qatar'   => 'Qatar News',
+    'uae'     => 'UAE News',
+    'saudi'   => 'Saudi News',
+    'oman'    => 'Oman News',
+    'kuwait'  => 'Kuwait News',
+    'bahrain' => 'Bahrain News',
+  ];
+
   foreach ($posts as $p) {
     $region = $p['region'] ?? 'global';
     switch ($region) {
@@ -757,6 +775,12 @@
     }
 
     $cat_name = strtolower($p['category_name'] ?? '');
+    $cat_slug = strtolower($p['category_slug'] ?? '');
+
+    if (isset($gcc_country_blocks[$cat_slug])) {
+      $gcc_country_blocks[$cat_slug][] = $p;
+    }
+
     switch ($cat_name) {
       case 'entertainment': $entertainment_posts[] = $p; break;
       case 'business':      $business_posts[]      = $p; break;
@@ -1110,6 +1134,32 @@
                 <?php endforeach; ?>
               </ul>
             <?php endif; ?>
+
+    <section class="card">
+      <div class="section-shell">
+        <div class="pill"><span class="pill-dot"></span> GCC Country Blocks</div>
+        <h2>GCC Country News</h2>
+      </div>
+      <div class="category-grid">
+        <?php foreach ($gcc_country_labels as $slug => $label): $items = $gcc_country_blocks[$slug] ?? []; ?>
+          <div class="category-card">
+            <h3><?= htmlspecialchars($label) ?> <a href="<?= hs_category_url($slug) ?>" style="font-size:11px; color:#2563EB;">View All</a></h3>
+            <?php if (empty($items)): ?>
+              <small>No <?= htmlspecialchars($label) ?> posts yet.</small>
+            <?php else: ?>
+              <ul>
+                <?php foreach (array_slice($items, 0, 3) as $p): ?>
+                  <li>
+                    <div><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                    <small><?= hs_post_date($p) ?></small>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
+            <?php endif; ?>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </section>
 
     <section class="card">
       <div class="section-shell">

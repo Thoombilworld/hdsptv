@@ -14,12 +14,12 @@ $ads = hs_active_ads();
 
 if (defined('HS_INSTALLED') && HS_INSTALLED) {
     $db = hs_db();
-    $res = mysqli_query($db, "SELECT p.*, c.name AS category_name
+    $res = mysqli_query($db, "SELECT p.*, c.name AS category_name, c.slug AS category_slug
                               FROM hs_posts p
                               LEFT JOIN hs_categories c ON c.id = p.category_id
                               WHERE p.status='published'
                               ORDER BY p.created_at DESC
-                              LIMIT 18");
+                              LIMIT 36");
     if ($res) {
         while ($row = mysqli_fetch_assoc($res)) $posts[] = $row;
     }
