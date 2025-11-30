@@ -1,7 +1,9 @@
 <?php
 require __DIR__ . '/../bootstrap.php';
-hs_require_admin();
+hs_require_staff(['admin', 'editor', 'reporter']);
 $settings = hs_settings();
+$staff = hs_current_staff();
+$role = $staff['role'] ?? 'admin';
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,18 +30,22 @@ $settings = hs_settings();
 </head>
 <body>
 <header>
-  <div class="logo">NEWS HDSPTV • ADMIN</div>
+  <div class="logo">NEWS HDSPTV • <?= strtoupper($role) ?></div>
   <nav>
     <a href="<?= hs_base_url('admin/index.php') ?>">Dashboard</a>
-    <a href="<?= hs_base_url('admin/homepage.php') ?>">Homepage</a>
-    <a href="<?= hs_base_url('admin/settings.php') ?>">Site Settings</a>
-    <a href="<?= hs_base_url('admin/legal.php') ?>">Legal</a>
     <a href="<?= hs_base_url('admin/content/index.php') ?>">Content</a>
-    <a href="<?= hs_base_url('admin/seo.php') ?>">SEO</a>
-    <a href="<?= hs_base_url('admin/social.php') ?>">Social</a>
-    <a href="<?= hs_base_url('admin/ads.php') ?>">Ads</a>
-    <a href="<?= hs_base_url('admin/users.php') ?>">Staff</a>
-    <a href="<?= hs_base_url('admin/logs.php') ?>">Logs</a>
+    <?php if (in_array($role, ['admin', 'editor'])): ?>
+      <a href="<?= hs_base_url('admin/homepage.php') ?>">Homepage</a>
+    <?php endif; ?>
+    <?php if ($role === 'admin'): ?>
+      <a href="<?= hs_base_url('admin/settings.php') ?>">Site Settings</a>
+      <a href="<?= hs_base_url('admin/legal.php') ?>">Legal</a>
+      <a href="<?= hs_base_url('admin/seo.php') ?>">SEO</a>
+      <a href="<?= hs_base_url('admin/social.php') ?>">Social</a>
+      <a href="<?= hs_base_url('admin/ads.php') ?>">Ads</a>
+      <a href="<?= hs_base_url('admin/users.php') ?>">Staff</a>
+      <a href="<?= hs_base_url('admin/logs.php') ?>">Logs</a>
+    <?php endif; ?>
     <a href="<?= hs_base_url('admin/logout.php') ?>" style="color:#FACC15;">Logout</a>
   </nav>
 </header>
@@ -51,42 +57,55 @@ $settings = hs_settings();
       <p>Integrate your content manager here (posts, categories, tags).</p>
       <a class="button" href="<?= hs_base_url('admin/content/index.php') ?>">Open Content Manager</a>
     </section>
-    <section class="card">
-      <div class="pill">Branding</div>
-      <h2>Site Settings</h2>
-      <p>Control site title, tagline, default theme, and logo URL.</p>
-      <a class="button" href="<?= hs_base_url('admin/settings.php') ?>">Edit Site Settings</a>
-    </section>
-    <section class="card">
-      <div class="pill">Homepage</div>
-      <h2>Homepage Layout</h2>
-      <p>Manage visibility of breaking ticker, featured slider, trending box, video, gallery, ads etc.</p>
-      <a class="button" href="<?= hs_base_url('admin/homepage.php') ?>">Homepage Manager</a>
-    </section>
-    <section class="card">
-      <div class="pill">SEO</div>
-      <h2>SEO Center</h2>
-      <p>Meta tags, keywords and default Open Graph data.</p>
-      <a class="button" href="<?= hs_base_url('admin/seo.php') ?>">SEO Settings</a>
-    </section>
-    <section class="card">
-      <div class="pill">Social</div>
-      <h2>Social Media</h2>
-      <p>Official HDSPTV links for Facebook, YouTube, Instagram, etc.</p>
-      <a class="button" href="<?= hs_base_url('admin/social.php') ?>">Social Links</a>
-    </section>
-    <section class="card">
-      <div class="pill">Ads</div>
-      <h2>Ad Spots</h2>
-      <p>Homepage top, sidebar and inline ads.</p>
-      <a class="button" href="<?= hs_base_url('admin/ads.php') ?>">Ads Manager</a>
-    </section>
-    <section class="card">
-      <div class="pill">Staff</div>
-      <h2>Staff Users</h2>
-      <p>Admin, editor and reporter accounts.</p>
-      <a class="button" href="<?= hs_base_url('admin/users.php') ?>">Staff Manager</a>
-    </section>
+    <?php if ($role === 'admin'): ?>
+      <section class="card">
+        <div class="pill">Branding</div>
+        <h2>Site Settings</h2>
+        <p>Control site title, tagline, default theme, and logo URL.</p>
+        <a class="button" href="<?= hs_base_url('admin/settings.php') ?>">Edit Site Settings</a>
+      </section>
+    <?php endif; ?>
+    <?php if (in_array($role, ['admin', 'editor'])): ?>
+      <section class="card">
+        <div class="pill">Homepage</div>
+        <h2>Homepage Layout</h2>
+        <p>Manage visibility of breaking ticker, featured slider, trending box, video, gallery, ads etc.</p>
+        <a class="button" href="<?= hs_base_url('admin/homepage.php') ?>">Homepage Manager</a>
+      </section>
+    <?php endif; ?>
+    <?php if ($role === 'admin'): ?>
+      <section class="card">
+        <div class="pill">SEO</div>
+        <h2>SEO Center</h2>
+        <p>Meta tags, keywords and default Open Graph data.</p>
+        <a class="button" href="<?= hs_base_url('admin/seo.php') ?>">SEO Settings</a>
+      </section>
+      <section class="card">
+        <div class="pill">Social</div>
+        <h2>Social Media</h2>
+        <p>Official HDSPTV links for Facebook, YouTube, Instagram, etc.</p>
+        <a class="button" href="<?= hs_base_url('admin/social.php') ?>">Social Links</a>
+      </section>
+      <section class="card">
+        <div class="pill">Ads</div>
+        <h2>Ad Spots</h2>
+        <p>Homepage top, sidebar and inline ads.</p>
+        <a class="button" href="<?= hs_base_url('admin/ads.php') ?>">Ads Manager</a>
+      </section>
+      <section class="card">
+        <div class="pill">Staff</div>
+        <h2>Staff Users</h2>
+        <p>Admin, editor and reporter accounts.</p>
+        <a class="button" href="<?= hs_base_url('admin/users.php') ?>">Staff Manager</a>
+      </section>
+    <?php else: ?>
+      <section class="card">
+        <div class="pill">Role</div>
+        <h2>Your Access</h2>
+        <p>You are signed in as a <?= htmlspecialchars($role) ?>. Content tools are enabled; administrative settings stay locked for your safety.</p>
+        <a class="button" href="<?= hs_base_url('admin/content/index.php') ?>">Work on Articles</a>
+      </section>
+    <?php endif; ?>
   </div>
 </main>
 </body>

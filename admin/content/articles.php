@@ -1,7 +1,9 @@
 <?php
 require __DIR__ . '/../../bootstrap.php';
-hs_require_admin();
+hs_require_staff(['admin', 'editor', 'reporter']);
 $db = hs_db();
+$staff = hs_current_staff();
+$role = $staff['role'] ?? 'admin';
 
 $res = mysqli_query($db, "SELECT p.id, p.title, p.type, p.status, p.is_featured, p.is_breaking, p.is_trending, p.region, c.name AS category_name, p.created_at
                           FROM hs_posts p
@@ -19,6 +21,7 @@ $posts = $res ? mysqli_fetch_all($res, MYSQLI_ASSOC) : [];
 </head>
 <body style="max-width:1200px;margin:20px auto;padding:0 16px;">
   <h1>Articles</h1>
+  <p>Signed in as <strong><?= htmlspecialchars($role) ?></strong>. <?php if ($role === 'reporter'): ?>You can add and edit stories; deletion stays restricted to editors and admins.<?php else: ?>You can add, edit, and remove stories.<?php endif; ?></p>
   <p><a href="<?= hs_base_url('admin/content/article_add.php') ?>">+ Add New Article</a></p>
   <table border="1" cellpadding="4" cellspacing="0" width="100%">
     <tr>
@@ -47,8 +50,10 @@ $posts = $res ? mysqli_fetch_all($res, MYSQLI_ASSOC) : [];
         </td>
         <td><?= htmlspecialchars($p['created_at']) ?></td>
         <td>
-          <a href="<?= hs_base_url('admin/content/article_edit.php?id='.(int)$p['id']) ?>">Edit</a> |
-          <a href="<?= hs_base_url('admin/content/article_delete.php?id='.(int)$p['id']) ?>" onclick="return confirm('Delete this article?')">Delete</a>
+          <a href="<?= hs_base_url('admin/content/article_edit.php?id='.(int)$p['id']) ?>">Edit</a>
+          <?php if (in_array($role, ['admin', 'editor'])): ?> |
+            <a href="<?= hs_base_url('admin/content/article_delete.php?id='.(int)$p['id']) ?>" onclick="return confirm('Delete this article?')">Delete</a>
+          <?php endif; ?>
         </td>
       </tr>
     <?php endforeach; ?>

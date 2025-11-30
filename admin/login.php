@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../bootstrap.php';
-if (hs_is_admin_logged_in()) {
+if (hs_is_staff_logged_in()) {
     header('Location: ' . hs_base_url('admin/index.php'));
     exit;
 }
@@ -9,18 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     if (defined('HS_INSTALLED') && HS_INSTALLED) {
-        $stmt = mysqli_prepare(hs_db(), "SELECT id, password_hash, name FROM hs_users WHERE email = ? AND role = 'admin' LIMIT 1");
+        $stmt = mysqli_prepare(
+            hs_db(),
+            "SELECT id, password_hash, name, role, status FROM hs_users WHERE email = ? LIMIT 1"
+        );
         mysqli_stmt_bind_param($stmt, 's', $email);
         mysqli_stmt_execute($stmt);
         $res = mysqli_stmt_get_result($stmt);
         $user = $res ? mysqli_fetch_assoc($res) : null;
-        if ($user && password_verify($password, $user['password_hash'])) {
+        if ($user && $user['status'] === 'active' && password_verify($password, $user['password_hash'])) {
             $_SESSION['hs_admin_id'] = $user['id'];
             $_SESSION['hs_admin_name'] = $user['name'];
+            $_SESSION['hs_admin_role'] = $user['role'];
             header('Location: ' . hs_base_url('admin/index.php'));
             exit;
         } else {
-            $error = 'Invalid login details';
+            $error = 'Invalid login details or inactive account';
         }
     } else {
         $error = 'System not installed yet. Run the installer.';

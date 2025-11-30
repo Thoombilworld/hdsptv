@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../../bootstrap.php';
-hs_require_admin();
+hs_require_staff(['admin', 'editor']);
 $db = hs_db();
 $error = '';
 

@@ -230,15 +230,73 @@ function hs_active_ads(array $slots = [])
     return $cached;
 }
 
-// Admin auth helpers
-function hs_is_admin_logged_in() {
-    return !empty($_SESSION['hs_admin_id']);
+// Admin / staff auth helpers
+function hs_current_staff()
+{
+    static $staff = null;
+
+    if ($staff !== null) {
+        return $staff;
+    }
+
+    if (empty($_SESSION['hs_admin_id'])) {
+        return null;
+    }
+
+    $id = (int) $_SESSION['hs_admin_id'];
+    $res = mysqli_query(
+        hs_db(),
+        "SELECT id, name, email, role, status FROM hs_users WHERE id = " . $id . " LIMIT 1"
+    );
+    $row = $res ? mysqli_fetch_assoc($res) : null;
+
+    if (!$row || $row['status'] !== 'active') {
+        return null;
+    }
+
+    $staff = $row;
+    $_SESSION['hs_admin_role'] = $row['role'];
+    $_SESSION['hs_admin_name'] = $row['name'];
+
+    return $staff;
 }
-function hs_require_admin() {
-    if (!hs_is_admin_logged_in()) {
+
+function hs_staff_role()
+{
+    $staff = hs_current_staff();
+    return $staff['role'] ?? null;
+}
+
+function hs_is_staff_logged_in()
+{
+    return (bool) hs_current_staff();
+}
+
+function hs_is_admin_logged_in()
+{
+    return hs_staff_role() === 'admin';
+}
+
+function hs_require_staff(array $roles = ['admin'])
+{
+    $staff = hs_current_staff();
+    $role = $staff['role'] ?? null;
+
+    if (!$staff) {
         header('Location: ' . hs_base_url('admin/login.php'));
         exit;
     }
+
+    if (!in_array($role, $roles, true)) {
+        http_response_code(403);
+        echo '<h1 style="font-family:system-ui, sans-serif; text-align:center; padding:40px;">Access denied for this role.</h1>';
+        exit;
+    }
+}
+
+function hs_require_admin()
+{
+    hs_require_staff(['admin']);
 }
 
 // Frontend user helpers

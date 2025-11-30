@@ -1,8 +1,10 @@
 
 <?php
 require __DIR__ . '/../../bootstrap.php';
-hs_require_admin();
+hs_require_staff(['admin', 'editor', 'reporter']);
 $settings = hs_settings();
+$staff = hs_current_staff();
+$role = $staff['role'] ?? 'admin';
 ?>
 <!doctype html>
 <html lang="en">
@@ -30,38 +32,50 @@ $settings = hs_settings();
 </head>
 <body>
 <header>
-  <div class="logo">NEWS HDSPTV • CONTENT</div>
+  <div class="logo">NEWS HDSPTV • <?= strtoupper($role) ?> CONTENT</div>
   <nav>
     <a href="<?= hs_base_url('admin/index.php') ?>">Dashboard</a>
     <a href="<?= hs_base_url('admin/content/index.php') ?>">Content</a>
-    <a href="<?= hs_base_url('admin/homepage.php') ?>">Homepage</a>
-    <a href="<?= hs_base_url('admin/settings.php') ?>">Site Settings</a>
-    <a href="<?= hs_base_url('admin/seo.php') ?>">SEO</a>
-    <a href="<?= hs_base_url('admin/social.php') ?>">Social</a>
-    <a href="<?= hs_base_url('admin/ads.php') ?>">Ads</a>
-    <a href="<?= hs_base_url('admin/users.php') ?>">Staff</a>
+    <?php if (in_array($role, ['admin', 'editor'])): ?>
+      <a href="<?= hs_base_url('admin/homepage.php') ?>">Homepage</a>
+    <?php endif; ?>
+    <?php if ($role === 'admin'): ?>
+      <a href="<?= hs_base_url('admin/settings.php') ?>">Site Settings</a>
+      <a href="<?= hs_base_url('admin/seo.php') ?>">SEO</a>
+      <a href="<?= hs_base_url('admin/social.php') ?>">Social</a>
+      <a href="<?= hs_base_url('admin/ads.php') ?>">Ads</a>
+      <a href="<?= hs_base_url('admin/users.php') ?>">Staff</a>
+    <?php endif; ?>
     <a href="<?= hs_base_url('admin/logout.php') ?>" style="color:#FACC15;">Logout</a>
   </nav>
 </header>
 <main class="container">
   <h1>Content Manager</h1>
-  <p class="lead">Manage articles, categories and tags powering the NEWS HDSPTV homepage and category pages.</p>
+  <p class="lead">Manage the newsroom pipeline. Access depends on your role.</p>
   <div class="cards">
     <section class="card">
       <h2>Articles</h2>
       <p>Create and edit news posts, set category, region, type (standard, video, gallery) and publish status.</p>
       <a class="button" href="<?= hs_base_url('admin/content/articles.php') ?>">Open Articles</a>
     </section>
-    <section class="card">
-      <h2>Categories</h2>
-      <p>News sections such as India, GCC, Kerala, World, Sports and custom categories.</p>
-      <a class="button" href="<?= hs_base_url('admin/content/categories.php') ?>">Open Categories</a>
-    </section>
-    <section class="card">
-      <h2>Tags</h2>
-      <p>Topic tags used for SEO, tag pages and internal linking.</p>
-      <a class="button" href="<?= hs_base_url('admin/content/tags.php') ?>">Open Tags</a>
-    </section>
+    <?php if (in_array($role, ['admin', 'editor'])): ?>
+      <section class="card">
+        <h2>Categories</h2>
+        <p>News sections such as India, GCC, Kerala, World, Sports and custom categories.</p>
+        <a class="button" href="<?= hs_base_url('admin/content/categories.php') ?>">Open Categories</a>
+      </section>
+      <section class="card">
+        <h2>Tags</h2>
+        <p>Topic tags used for SEO, tag pages and internal linking.</p>
+        <a class="button" href="<?= hs_base_url('admin/content/tags.php') ?>">Open Tags</a>
+      </section>
+    <?php else: ?>
+      <section class="card">
+        <h2>Reporter Brief</h2>
+        <p>Reporters can draft and publish stories. Categories and tags stay pre-defined by admins and editors.</p>
+        <a class="button" href="<?= hs_base_url('admin/content/articles.php') ?>">Start Writing</a>
+      </section>
+    <?php endif; ?>
   </div>
 </main>
 </body>
