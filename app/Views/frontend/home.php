@@ -726,6 +726,7 @@
 </head>
 <body>
 <?php
+  $all_categories = $categories ?? [];
   $india_posts  = [];
   $gcc_posts    = [];
   $kerala_posts = [];
@@ -764,6 +765,8 @@
     'bahrain' => 'Bahrain News',
   ];
 
+  $category_posts = [];
+
   foreach ($posts as $p) {
     $region = $p['region'] ?? 'global';
     switch ($region) {
@@ -779,6 +782,13 @@
 
     if (isset($gcc_country_blocks[$cat_slug])) {
       $gcc_country_blocks[$cat_slug][] = $p;
+    }
+
+    if (!empty($cat_slug)) {
+      if (!isset($category_posts[$cat_slug])) {
+        $category_posts[$cat_slug] = [];
+      }
+      $category_posts[$cat_slug][] = $p;
     }
 
     switch ($cat_name) {
@@ -803,28 +813,22 @@
   }
   $slider_mini = array_slice($slider_posts, 1, 6);
 
-  $category_blocks = [
-    'Politics'      => $politics_posts,
-    'Crime'         => $crime_posts,
-    'Education'     => $education_posts,
-    'Religion'      => $religion_posts,
-    'Entertainment' => $entertainment_posts,
-    'Business'      => $business_posts,
-    'Technology'    => $technology_posts,
-    'Lifestyle'     => $lifestyle_posts,
-    'Health'        => $health_posts,
-    'Travel'        => $travel_posts,
-    'Auto'          => $auto_posts,
-    'Opinion'       => $opinion_posts,
-  ];
+  $category_blocks = [];
 
-  foreach ($posts as $p) {
-    $label = $p['category_name'] ?: 'News';
-    if (!isset($category_blocks[$label])) {
-      $category_blocks[$label] = [];
+  if (!empty($all_categories)) {
+    foreach ($all_categories as $cat) {
+      $slug = strtolower($cat['slug']);
+      $category_blocks[$slug] = [
+        'label' => $cat['name'],
+        'items' => $category_posts[$slug] ?? [],
+      ];
     }
-    if (count($category_blocks[$label]) < 4) {
-      $category_blocks[$label][] = $p;
+  } else {
+    foreach ($category_posts as $slug => $items) {
+      $category_blocks[$slug] = [
+        'label' => ucwords(str_replace('-', ' ', $slug)),
+        'items' => $items,
+      ];
     }
   }
 
@@ -1167,23 +1171,27 @@
         <h2>All categories</h2>
       </div>
       <div class="category-grid">
-        <?php foreach ($category_blocks as $label => $items): ?>
-          <div class="category-card">
-            <h3><?= htmlspecialchars($label) ?> <a href="<?= hs_category_url(strtolower($label)) ?>" style="font-size:11px; color:#2563EB;">View All</a></h3>
-            <?php if (empty($items)): ?>
-              <small>No stories published yet.</small>
-            <?php else: ?>
-              <ul>
-                <?php foreach (array_slice($items, 0, 4) as $p): ?>
-                  <li>
-                    <div><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                    <small><?= hs_post_date($p) ?></small>
-                  </li>
-                <?php endforeach; ?>
-              </ul>
-            <?php endif; ?>
-          </div>
-        <?php endforeach; ?>
+        <?php if (empty($category_blocks)): ?>
+          <small>No categories configured yet.</small>
+        <?php else: ?>
+          <?php foreach ($category_blocks as $slug => $block): $items = $block['items'] ?? []; ?>
+            <div class="category-card">
+              <h3><?= htmlspecialchars($block['label'] ?? $slug) ?> <a href="<?= hs_category_url($slug) ?>" style="font-size:11px; color:#2563EB;">View All</a></h3>
+              <?php if (empty($items)): ?>
+                <small>No stories published yet.</small>
+              <?php else: ?>
+                <ul>
+                  <?php foreach (array_slice($items, 0, 4) as $p): ?>
+                    <li>
+                      <div><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
+                      <small><?= hs_post_date($p) ?></small>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
       </div>
     </section>
 

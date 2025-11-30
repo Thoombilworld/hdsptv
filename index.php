@@ -4,6 +4,7 @@ require __DIR__ . '/bootstrap.php';
 $settings = hs_settings();
 
 $posts = [];
+$categories = [];
 $featured = [];
 $breaking = [];
 $trending = [];
@@ -59,10 +60,14 @@ if (defined('HS_INSTALLED') && HS_INSTALLED) {
                               LIMIT 6");
     if ($res) while ($r = mysqli_fetch_assoc($res)) $gallery_posts[] = $r;
 
+    $res = mysqli_query($db, "SELECT id, name, slug FROM hs_categories ORDER BY name ASC");
+    if ($res) while ($r = mysqli_fetch_assoc($res)) $categories[] = $r;
+
 }
 
 hs_view('frontend/home', [
     'settings'      => $settings,
+    'categories'    => $categories,
     'posts'         => $posts,
     'featured'      => $featured,
     'breaking'      => $breaking,
