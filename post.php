@@ -57,6 +57,38 @@ if (!empty($post['category_id'])) {
     }
 }
 
+// Adjacent navigation
+$prevPost = $nextPost = null;
+if (!empty($post['created_at'])) {
+    $catClause = !empty($post['category_id']) ? ' AND category_id = ?' : '';
+
+    $prevSql = "SELECT title, slug FROM hs_posts WHERE status='published' AND created_at < ?{$catClause} ORDER BY created_at DESC LIMIT 1";
+    $prevStmt = mysqli_prepare($db, $prevSql);
+    if ($prevStmt) {
+        if (!empty($post['category_id'])) {
+            mysqli_stmt_bind_param($prevStmt, 'si', $post['created_at'], $post['category_id']);
+        } else {
+            mysqli_stmt_bind_param($prevStmt, 's', $post['created_at']);
+        }
+        mysqli_stmt_execute($prevStmt);
+        $prevRes = mysqli_stmt_get_result($prevStmt);
+        $prevPost = $prevRes ? mysqli_fetch_assoc($prevRes) : null;
+    }
+
+    $nextSql = "SELECT title, slug FROM hs_posts WHERE status='published' AND created_at > ?{$catClause} ORDER BY created_at ASC LIMIT 1";
+    $nextStmt = mysqli_prepare($db, $nextSql);
+    if ($nextStmt) {
+        if (!empty($post['category_id'])) {
+            mysqli_stmt_bind_param($nextStmt, 'si', $post['created_at'], $post['category_id']);
+        } else {
+            mysqli_stmt_bind_param($nextStmt, 's', $post['created_at']);
+        }
+        mysqli_stmt_execute($nextStmt);
+        $nextRes = mysqli_stmt_get_result($nextStmt);
+        $nextPost = $nextRes ? mysqli_fetch_assoc($nextRes) : null;
+    }
+}
+
 // Trending for sidebar
 $trending = [];
 $tRes = mysqli_query($db, "SELECT p.id, p.title, p.slug, p.created_at
@@ -96,6 +128,12 @@ $render_ad = function ($slot, $label = '') use ($ad_for) {
 function hs_post_date_local($p) {
     return !empty($p['created_at']) ? date('M j, Y', strtotime($p['created_at'])) : '';
 }
+
+$authorName = $post['author_name'] ?? ($settings['seo_default_author'] ?? 'NEWS HDSPTV');
+$reporterName = $post['reporter_name'] ?? ($post['author_name'] ?? ($settings['seo_default_author'] ?? 'NEWS HDSPTV'));
+$regionLabel = !empty($post['region']) && $post['region'] !== 'global'
+    ? strtoupper($post['region'])
+    : 'GLOBAL';
 
 // SEO meta
 $site_title = $settings['site_title'] ?? 'NEWS HDSPTV';
@@ -259,9 +297,10 @@ if (!empty($post['image_main'])) {
     }
     .article-hero-image {
       width:100%;
-      max-height:420px;
+      max-height:520px;
       background:#e5e7eb;
       overflow:hidden;
+      position:relative;
     }
     .article-hero-image img {
       width:100%;
@@ -295,11 +334,12 @@ if (!empty($post['image_main'])) {
       margin-bottom:8px;
       color:#0F172A;
     }
-    .article-meta {
-      font-size:12px;
-      color:var(--hs-text-muted);
-      margin-bottom:12px;
-    }
+    .article-meta { font-size:12px; color:var(--hs-text-muted); margin-bottom:12px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+    .badge { display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.02em; }
+    .badge-category { background:#EEF2FF; color:#312E81; border:1px solid #C7D2FE; }
+    .badge-region { background:#DCFCE7; color:#065F46; border:1px solid #A7F3D0; }
+    .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:12px; font-size:12px; background:#0F172A; color:#E5E7EB; border:1px solid rgba(15,23,42,0.2); box-shadow:0 10px 30px rgba(15,23,42,0.2); }
+    .pill svg { width:14px; height:14px; }
 
     .article-tags {
       margin-top:12px;
@@ -355,27 +395,24 @@ if (!empty($post['image_main'])) {
       background:#FFFFFF;
     }
 
-    .related-block {
-      margin-top:18px;
-      padding-top:14px;
-      border-top:1px solid var(--hs-border-soft);
-    }
-    .related-title {
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:#6B7280;
-      margin-bottom:8px;
-    }
-    .related-list {
-      list-style:none;
-      padding:0;
-      margin:0;
-      font-size:14px;
-    }
-    .related-list li {
-      margin-bottom:6px;
-    }
+    .related-block { margin-top:18px; padding-top:14px; border-top:1px solid var(--hs-border-soft); }
+    .related-title { font-size:13px; text-transform:uppercase; letter-spacing:.16em; color:#6B7280; margin-bottom:10px; }
+    .related-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+    .related-card { background:#F8FAFC; border:1px solid #E5E7EB; border-radius:14px; padding:12px 14px; box-shadow:0 10px 28px rgba(15,23,42,0.08); }
+    .related-card a { color:#0F172A; font-weight:700; display:block; margin-bottom:6px; }
+    .related-card a:hover { color:#1D4ED8; text-decoration:none; }
+    .related-meta { font-size:12px; color:#6B7280; }
+
+    .article-nav { display:flex; justify-content:space-between; gap:10px; margin:18px 0 6px; padding:14px 0; border-top:1px solid var(--hs-border-soft); border-bottom:1px solid var(--hs-border-soft); }
+    .article-nav a { display:block; background:#0F172A; color:#E5E7EB; padding:10px 12px; border-radius:12px; border:1px solid rgba(15,23,42,0.25); box-shadow:0 10px 32px rgba(15,23,42,0.25); width:100%; }
+    .article-nav a:hover { background:#111827; text-decoration:none; color:#FACC15; }
+
+    .comment-block { margin-top:18px; padding:14px; background:#F8FAFC; border-radius:14px; border:1px solid #E5E7EB; }
+    .comment-title { font-size:14px; font-weight:800; margin-bottom:8px; color:#0F172A; }
+    .comment-note { font-size:12px; color:#6B7280; margin-bottom:10px; }
+    .comment-field { width:100%; min-height:120px; border-radius:12px; border:1px solid #E5E7EB; padding:10px; font-size:14px; box-sizing:border-box; }
+    .comment-action { margin-top:10px; display:flex; justify-content:flex-end; }
+    .comment-action button { background:#1D4ED8; color:#FFF; border:none; padding:10px 14px; border-radius:10px; font-weight:700; cursor:not-allowed; opacity:.7; }
 
     .sidebar {
       display:flex;
@@ -442,14 +479,6 @@ if (!empty($post['image_main'])) {
       .article-inner { padding:14px 14px 16px; }
       .article-title { font-size:20px; }
     }
-  
-.share-block {
-  margin: 12px 0 16px;
-  padding: 8px 0;
-  border-top: 1px solid rgba(15,23,42,0.5);
-  border-bottom: 1px solid rgba(15,23,42,0.5);
-}
-
   </style>
 </head>
 <body>
@@ -514,18 +543,20 @@ if (!empty($post['image_main'])) {
             › <a href="<?= hs_category_url(strtolower($categorySlug)) ?>"><?= htmlspecialchars($categoryName) ?></a>
           <?php endif; ?>
         </nav>
-        <div class="article-kicker">
-          <?= htmlspecialchars($categoryName) ?>
-          <?php if (!empty($post['region']) && $post['region'] !== 'global'): ?>
-            · <?= strtoupper(htmlspecialchars($post['region'])) ?>
-          <?php endif; ?>
-        </div>
+        <div class="article-kicker">Premium Report</div>
         <h1 class="article-title"><?= htmlspecialchars($post['title']) ?></h1>
         <div class="article-meta">
-          <?= hs_post_date_local($post) ?>
-          <?php if (!empty($post['author_name'])): ?>
-            · By <?= htmlspecialchars($post['author_name']) ?>
-          <?php endif; ?>
+          <span class="badge badge-category">Category · <?= htmlspecialchars($categoryName) ?></span>
+          <span class="badge badge-region">Region · <?= htmlspecialchars($regionLabel) ?></span>
+          <span class="pill" title="Author">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 10a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4 0-6 1.79-6 3.33C4 16.67 5.33 18 10 18s6-1.33 6-2.67C16 13.79 14 12 10 12Z"/></svg>
+            <?= htmlspecialchars($authorName) ?>
+          </span>
+          <span class="pill" title="Reporter">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M3 4.5A1.5 1.5 0 0 1 4.5 3h11A1.5 1.5 0 0 1 17 4.5v11A1.5 1.5 0 0 1 15.5 17h-11A1.5 1.5 0 0 1 3 15.5Z"/><path d="M6 6h8v2H6Zm0 3.5h8v2H6Zm0 3.5h5v2H6Z"/></svg>
+            <?= htmlspecialchars($reporterName) ?>
+          </span>
+          <span style="color:#64748B;">· <?= hs_post_date_local($post) ?></span>
         </div>
 
         <div class="share-block">
@@ -568,17 +599,39 @@ if (!empty($post['image_main'])) {
 
         <?php if (!empty($related)): ?>
           <div class="related-block">
-            <div class="related-title">More from <?= htmlspecialchars($categoryName) ?></div>
-            <ul class="related-list">
+            <div class="related-title">Related articles</div>
+            <div class="related-grid">
               <?php foreach ($related as $r): ?>
-                <li>
-                    <a href="<?= hs_news_url($r['slug']) ?>"><?= htmlspecialchars($r['title']) ?></a>
-                  <span style="font-size:11px;color:#9CA3AF;"> · <?= hs_post_date_local($r) ?></span>
-                </li>
+                <article class="related-card">
+                  <a href="<?= hs_news_url($r['slug']) ?>"><?= htmlspecialchars($r['title']) ?></a>
+                  <div class="related-meta">Published <?= hs_post_date_local($r) ?></div>
+                </article>
               <?php endforeach; ?>
-            </ul>
+            </div>
           </div>
         <?php endif; ?>
+
+        <?php if ($prevPost || $nextPost): ?>
+          <div class="article-nav">
+            <div style="flex:1;">
+              <?php if ($prevPost): ?>
+                <a href="<?= hs_news_url($prevPost['slug']) ?>">← Previous: <?= htmlspecialchars($prevPost['title']) ?></a>
+              <?php endif; ?>
+            </div>
+            <div style="flex:1; text-align:right;">
+              <?php if ($nextPost): ?>
+                <a href="<?= hs_news_url($nextPost['slug']) ?>">Next: <?= htmlspecialchars($nextPost['title']) ?> →</a>
+              <?php endif; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <div class="comment-block" aria-live="polite">
+          <div class="comment-title">Comments</div>
+          <div class="comment-note">Optional section — wire up your preferred provider or enable native comments.</div>
+          <textarea class="comment-field" placeholder="Share your thoughts (coming soon)..." disabled></textarea>
+          <div class="comment-action"><button type="button" disabled>Post Comment</button></div>
+        </div>
       </div>
     </article>
 
