@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <label>Type</label><br>
     <select name="type">
-      <option value="article" <?= $post['type']=='article'?'selected':'' ?>>Article</option>
+      <option value="article" <?= $post['type']=='article'?'selected':'' ?>>Standard (Article)</option>
       <option value="video" <?= $post['type']=='video'?'selected':'' ?>>Video</option>
       <option value="gallery" <?= $post['type']=='gallery'?'selected':'' ?>>Gallery</option>
     </select><br><br>

@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <label>Type</label><br>
     <select name="type">
-      <option value="article">Article</option>
+      <option value="article">Standard (Article)</option>
       <option value="video">Video</option>
       <option value="gallery">Gallery</option>
     </select><br><br>
