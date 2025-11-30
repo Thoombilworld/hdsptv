@@ -65,6 +65,8 @@ if (defined('HS_INSTALLED') && HS_INSTALLED) {
 
 }
 
+hs_track_event(['type' => 'home']);
+
 hs_view('frontend/home', [
     'settings'      => $settings,
     'categories'    => $categories,

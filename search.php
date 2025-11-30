@@ -22,11 +22,15 @@ if ($q !== '') {
     mysqli_stmt_bind_param($stmt, 'sss', $like, $like, $like);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
-    if ($res) {
-        while ($row = mysqli_fetch_assoc($res)) {
-            $posts[] = $row;
+        if ($res) {
+            while ($row = mysqli_fetch_assoc($res)) {
+                $posts[] = $row;
+            }
         }
-    }
+
+    hs_track_event([
+        'type' => 'search',
+    ]);
 }
 
 $ads = hs_active_ads();

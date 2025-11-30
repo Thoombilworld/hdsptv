@@ -43,6 +43,7 @@ $role = $staff['role'] ?? 'admin';
       <a href="<?= hs_base_url('admin/seo.php') ?>">SEO</a>
       <a href="<?= hs_base_url('admin/social.php') ?>">Social</a>
       <a href="<?= hs_base_url('admin/ads.php') ?>">Ads</a>
+      <a href="<?= hs_base_url('admin/analytics.php') ?>">Analytics</a>
       <a href="<?= hs_base_url('admin/users.php') ?>">Staff</a>
       <a href="<?= hs_base_url('admin/logs.php') ?>">Logs</a>
     <?php endif; ?>
@@ -91,6 +92,12 @@ $role = $staff['role'] ?? 'admin';
         <h2>Ad Spots</h2>
         <p>Homepage top, sidebar and inline ads.</p>
         <a class="button" href="<?= hs_base_url('admin/ads.php') ?>">Ads Manager</a>
+      </section>
+      <section class="card">
+        <div class="pill">Analytics</div>
+        <h2>Performance</h2>
+        <p>Track visitors, reads, devices, countries, and staff performance.</p>
+        <a class="button" href="<?= hs_base_url('admin/analytics.php') ?>">Open Analytics</a>
       </section>
       <section class="card">
         <div class="pill">Staff</div>

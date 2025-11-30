@@ -230,6 +230,90 @@ function hs_active_ads(array $slots = [])
     return $cached;
 }
 
+// Analytics helpers
+function hs_client_ip()
+{
+    $keys = ['HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_CF_CONNECTING_IP', 'REMOTE_ADDR'];
+    foreach ($keys as $key) {
+        $raw = $_SERVER[$key] ?? '';
+        if ($raw === '') continue;
+        $ip = trim(explode(',', $raw)[0]);
+        if (filter_var($ip, FILTER_VALIDATE_IP)) {
+            return $ip;
+        }
+    }
+    return '';
+}
+
+function hs_is_bot($ua)
+{
+    return (bool) preg_match('/bot|crawl|spider|slurp|mediapartners|bingpreview/i', $ua);
+}
+
+function hs_detect_device_type($ua)
+{
+    if (stripos($ua, 'tablet') !== false || stripos($ua, 'ipad') !== false) {
+        return 'Tablet';
+    }
+    if (stripos($ua, 'mobile') !== false || stripos($ua, 'iphone') !== false || stripos($ua, 'android') !== false) {
+        return 'Mobile';
+    }
+    return 'Desktop';
+}
+
+function hs_detect_browser($ua)
+{
+    if (stripos($ua, 'edg') !== false) return 'Edge';
+    if (stripos($ua, 'opr') !== false || stripos($ua, 'opera') !== false) return 'Opera';
+    if (stripos($ua, 'chrome') !== false) return 'Chrome';
+    if (stripos($ua, 'safari') !== false) return 'Safari';
+    if (stripos($ua, 'firefox') !== false) return 'Firefox';
+    if (stripos($ua, 'msie') !== false || stripos($ua, 'trident') !== false) return 'IE';
+    return 'Other';
+}
+
+function hs_detect_country()
+{
+    $country = strtoupper(trim($_SERVER['HTTP_CF_IPCOUNTRY'] ?? ''));
+    if ($country !== '') {
+        return $country;
+    }
+    return 'Unknown';
+}
+
+function hs_track_event(array $event = [])
+{
+    if (!defined('HS_INSTALLED') || !HS_INSTALLED) return;
+
+    $ua = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 250);
+    if (hs_is_bot($ua)) return;
+
+    $db = hs_db();
+    $esc = fn($v) => mysqli_real_escape_string($db, $v);
+
+    $type = $event['type'] ?? 'pageview';
+    $post_id = (int)($event['post_id'] ?? 0);
+    $category_id = (int)($event['category_id'] ?? 0);
+    $reporter_id = (int)($event['reporter_id'] ?? 0);
+    $editor_id = (int)($event['editor_id'] ?? 0);
+    $country = $event['country'] ?? hs_detect_country();
+    $device = $event['device'] ?? hs_detect_device_type($ua);
+    $browser = $event['browser'] ?? hs_detect_browser($ua);
+    $ip = hs_client_ip();
+    $visitor_hash = $ip !== '' ? substr(sha1($ip), 0, 40) : null;
+
+    $sql = "INSERT INTO hs_analytics_events (event_type, post_id, category_id, reporter_id, editor_id, visitor_hash, country, device, browser, user_agent) VALUES ("
+         . "'{$esc($type)}',"
+         . ($post_id > 0 ? (int)$post_id : 'NULL') . ','
+         . ($category_id > 0 ? (int)$category_id : 'NULL') . ','
+         . ($reporter_id > 0 ? (int)$reporter_id : 'NULL') . ','
+         . ($editor_id > 0 ? (int)$editor_id : 'NULL') . ','
+         . ($visitor_hash ? "'{$esc($visitor_hash)}'" : 'NULL') . ','
+         . "'{$esc($country)}','{$esc($device)}','{$esc($browser)}','{$esc($ua)}'" . ')';
+
+    @mysqli_query($db, $sql);
+}
+
 // Admin / staff auth helpers
 function hs_current_staff()
 {

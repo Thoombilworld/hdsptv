@@ -84,6 +84,8 @@ CREATE TABLE IF NOT EXISTS hs_posts (
   content LONGTEXT NULL,
   type ENUM('article','video','gallery') NOT NULL DEFAULT 'article',
   region ENUM('global','india','gcc','kerala','world','sports') NOT NULL DEFAULT 'global',
+  reporter_id INT UNSIGNED NULL,
+  editor_id INT UNSIGNED NULL,
   image_main VARCHAR(255) NULL,
   video_url VARCHAR(255) NULL,
   is_breaking TINYINT(1) NOT NULL DEFAULT 0,
@@ -95,6 +97,8 @@ CREATE TABLE IF NOT EXISTS hs_posts (
   INDEX (slug),
   INDEX (status),
   INDEX (region),
+  INDEX (reporter_id),
+  INDEX (editor_id),
   CONSTRAINT fk_posts_category FOREIGN KEY (category_id) REFERENCES hs_categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -187,4 +191,29 @@ CREATE TABLE IF NOT EXISTS hs_stats_daily (
   unique_visitors INT UNSIGNED NOT NULL DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY (stat_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS hs_analytics_events (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  event_type VARCHAR(40) NOT NULL DEFAULT 'pageview',
+  post_id INT UNSIGNED NULL,
+  category_id INT UNSIGNED NULL,
+  reporter_id INT UNSIGNED NULL,
+  editor_id INT UNSIGNED NULL,
+  visitor_hash VARCHAR(80) NULL,
+  country VARCHAR(80) NULL,
+  device VARCHAR(30) NULL,
+  browser VARCHAR(40) NULL,
+  user_agent VARCHAR(255) NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX (event_type),
+  INDEX (post_id),
+  INDEX (category_id),
+  INDEX (reporter_id),
+  INDEX (editor_id),
+  INDEX (visitor_hash),
+  INDEX (country),
+  INDEX (device),
+  INDEX (browser),
+  INDEX (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

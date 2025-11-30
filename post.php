@@ -100,6 +100,14 @@ if ($tRes) {
     while ($r = mysqli_fetch_assoc($tRes)) $trending[] = $r;
 }
 
+hs_track_event([
+    'type'        => 'post',
+    'post_id'     => (int)$post['id'],
+    'category_id' => (int)($post['category_id'] ?? 0),
+    'reporter_id' => (int)($post['reporter_id'] ?? 0),
+    'editor_id'   => (int)($post['editor_id'] ?? 0),
+]);
+
 $ads = hs_active_ads();
 $ad_for = function ($slot) use ($ads) {
     return $ads[$slot] ?? null;

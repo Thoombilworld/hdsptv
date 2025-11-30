@@ -2,10 +2,17 @@
 require __DIR__ . '/../../bootstrap.php';
 hs_require_staff(['admin', 'editor', 'reporter']);
 $db = hs_db();
+$staff = hs_current_staff();
+$role = $staff['role'] ?? 'admin';
 
 // categories for select
 $catRes = mysqli_query($db, "SELECT id, name FROM hs_categories ORDER BY name ASC");
 $categories = $catRes ? mysqli_fetch_all($catRes, MYSQLI_ASSOC) : [];
+$reporters = $editors = [];
+$rRes = mysqli_query($db, "SELECT id, name FROM hs_users WHERE role='reporter' AND status='active' ORDER BY name ASC");
+if ($rRes) $reporters = mysqli_fetch_all($rRes, MYSQLI_ASSOC);
+$eRes = mysqli_query($db, "SELECT id, name FROM hs_users WHERE role='editor' AND status='active' ORDER BY name ASC");
+if ($eRes) $editors = mysqli_fetch_all($eRes, MYSQLI_ASSOC);
 
 function hs_slugify_local($text) {
     $text = trim($text);
@@ -26,6 +33,8 @@ if (!$post) {
     echo "Post not found.";
     exit;
 }
+$selected_reporter = (int)($post['reporter_id'] ?? (($role === 'reporter') ? ($staff['id'] ?? 0) : 0));
+$selected_editor   = (int)($post['editor_id'] ?? (($role === 'editor' || $role === 'admin') ? ($staff['id'] ?? 0) : 0));
 $error = '';
 $tags_str = '';
 $tr = mysqli_query($db, "SELECT t.name FROM hs_tags t JOIN hs_post_tags pt ON pt.tag_id=t.id WHERE pt.post_id=".$id);
@@ -51,6 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status  = $_POST['status'] ?? 'draft';
     $tags_raw = trim($_POST['tags'] ?? '');
     $image_main = $post['image_main'];
+    $reporter_id = $role === 'reporter' ? (int)($staff['id'] ?? 0) : (int)($_POST['reporter_id'] ?? $selected_reporter);
+    $editor_id   = in_array($role, ['admin','editor'], true) ? (int)($_POST['editor_id'] ?? $selected_editor) : $selected_editor;
+    $selected_reporter = $reporter_id;
+    $selected_editor = $editor_id;
 
     if ($title === '') {
         $error = 'Title is required.';
@@ -68,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        $stmt = mysqli_prepare($db, "UPDATE hs_posts SET category_id=?, title=?, slug=?, excerpt=?, content=?, type=?, region=?, image_main=?, video_url=?, is_breaking=?, is_featured=?, is_trending=?, status=? WHERE id=?");
-        mysqli_stmt_bind_param($stmt, 'issssssssiiisi', $cat_id,$title,$slug,$excerpt,$content,$type,$region,$image_main,$video_url,$is_breaking,$is_featured,$is_trending,$status,$id);
+        $stmt = mysqli_prepare($db, "UPDATE hs_posts SET category_id=?, title=?, slug=?, excerpt=?, content=?, type=?, region=?, reporter_id=?, editor_id=?, image_main=?, video_url=?, is_breaking=?, is_featured=?, is_trending=?, status=? WHERE id=?");
+        mysqli_stmt_bind_param($stmt, 'issssssiissiiisi', $cat_id,$title,$slug,$excerpt,$content,$type,$region,$reporter_id,$editor_id,$image_main,$video_url,$is_breaking,$is_featured,$is_trending,$status,$id);
         if (!mysqli_stmt_execute($stmt)) {
             $error = 'Error updating post: ' . mysqli_error($db);
         } else {
@@ -110,6 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $post['is_featured'] = $is_featured;
     $post['is_trending'] = $is_trending;
     $post['status'] = $status;
+    $post['reporter_id'] = $selected_reporter;
+    $post['editor_id'] = $selected_editor;
     $tags_str = $tags_raw;
 }
 ?>
@@ -158,6 +173,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <option value="world" <?= $post['region']=='world'?'selected':'' ?>>World</option>
       <option value="sports" <?= $post['region']=='sports'?'selected':'' ?>>Sports</option>
     </select><br><br>
+
+    <?php if ($role === 'reporter'): ?>
+      <input type="hidden" name="reporter_id" value="<?= (int)$selected_reporter ?>">
+    <?php else: ?>
+      <label>Reporter</label><br>
+      <select name="reporter_id" style="width:100%;">
+        <option value="0">-- Not assigned --</option>
+        <?php foreach ($reporters as $r): ?>
+          <option value="<?= (int)$r['id'] ?>" <?= $selected_reporter == $r['id'] ? 'selected' : '' ?>><?= htmlspecialchars($r['name']) ?></option>
+        <?php endforeach; ?>
+      </select><br><br>
+    <?php endif; ?>
+
+    <?php if (in_array($role, ['admin','editor'], true)): ?>
+      <label>Editor</label><br>
+      <select name="editor_id" style="width:100%;">
+        <option value="0">-- Not assigned --</option>
+        <?php foreach ($editors as $e): ?>
+          <option value="<?= (int)$e['id'] ?>" <?= $selected_editor == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name']) ?></option>
+        <?php endforeach; ?>
+      </select><br><br>
+    <?php else: ?>
+      <input type="hidden" name="editor_id" value="<?= (int)$selected_editor ?>">
+    <?php endif; ?>
 
     <label>Short Description (Excerpt)</label><br>
     <textarea name="excerpt" style="width:100%;height:60px;"><?= htmlspecialchars($post['excerpt']) ?></textarea><br><br>

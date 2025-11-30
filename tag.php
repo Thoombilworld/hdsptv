@@ -35,6 +35,11 @@ if ($pRes) {
     while ($row = mysqli_fetch_assoc($pRes)) $posts[] = $row;
 }
 
+hs_track_event([
+    'type'        => 'tag',
+    'category_id' => !empty($posts) ? (int)$posts[0]['category_id'] : null,
+]);
+
 $ads = hs_active_ads();
 $ad_for = function ($slot) use ($ads) {
     return $ads[$slot] ?? null;
