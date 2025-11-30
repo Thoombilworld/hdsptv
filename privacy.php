@@ -10,6 +10,7 @@ $page_title = 'Privacy Policy – ' . $site_title;
 $meta_desc = $settings['seo_meta_description'] ?? ($settings['tagline'] ?? '');
 $meta_keys = $settings['seo_meta_keywords'] ?? '';
 $canonical = hs_base_url('privacy');
+$privacy_content = $settings['privacy_content'] ?? '';
 ?>
 <!doctype html>
 <html lang="en">
@@ -157,49 +158,53 @@ $canonical = hs_base_url('privacy');
     <h1 class="content-title">Privacy Policy</h1>
     <p class="content-sub">This page explains what data <?= htmlspecialchars($site_title) ?> collects, how we use it, and the options you have to control your information.</p>
 
-    <div class="content-section">
-      <h2>1. Information we collect</h2>
-      <p>We collect the information you provide when creating an account, posting comments, or contacting us. We also log technical details such as device type, browser, and approximate location for security and analytics.</p>
-    </div>
+    <?php if (!empty($privacy_content)): ?>
+      <div class="content-section"><?= $privacy_content ?></div>
+    <?php else: ?>
+      <div class="content-section">
+        <h2>1. Information we collect</h2>
+        <p>We collect the information you provide when creating an account, posting comments, or contacting us. We also log technical details such as device type, browser, and approximate location for security and analytics.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>2. Cookies and tracking</h2>
-      <p>We use cookies to remember your preferences, keep you signed in, and measure site performance. Third-party embeds such as videos or ads may set their own cookies according to their policies.</p>
-    </div>
+      <div class="content-section">
+        <h2>2. Cookies and tracking</h2>
+        <p>We use cookies to remember your preferences, keep you signed in, and measure site performance. Third-party embeds such as videos or ads may set their own cookies according to their policies.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>3. How we use data</h2>
-      <ul class="content-list">
-        <li>Deliver news, alerts, and personalized content you request.</li>
-        <li>Secure accounts, prevent abuse, and troubleshoot issues.</li>
-        <li>Measure readership to improve coverage and product quality.</li>
-      </ul>
-    </div>
+      <div class="content-section">
+        <h2>3. How we use data</h2>
+        <ul class="content-list">
+          <li>Deliver news, alerts, and personalized content you request.</li>
+          <li>Secure accounts, prevent abuse, and troubleshoot issues.</li>
+          <li>Measure readership to improve coverage and product quality.</li>
+        </ul>
+      </div>
 
-    <div class="content-section">
-      <h2>4. Sharing</h2>
-      <p>We do not sell your personal data. We may share limited information with trusted vendors for hosting, analytics, or email delivery under confidentiality obligations.</p>
-    </div>
+      <div class="content-section">
+        <h2>4. Sharing</h2>
+        <p>We do not sell your personal data. We may share limited information with trusted vendors for hosting, analytics, or email delivery under confidentiality obligations.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>5. Your choices</h2>
-      <p>You can update your profile details from your dashboard, unsubscribe from marketing emails via the link provided, or request data removal by contacting us.</p>
-    </div>
+      <div class="content-section">
+        <h2>5. Your choices</h2>
+        <p>You can update your profile details from your dashboard, unsubscribe from marketing emails via the link provided, or request data removal by contacting us.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>6. Data retention</h2>
-      <p>We keep account information while your profile remains active and as required by law. Backups are purged on a rolling schedule to minimize retention.</p>
-    </div>
+      <div class="content-section">
+        <h2>6. Data retention</h2>
+        <p>We keep account information while your profile remains active and as required by law. Backups are purged on a rolling schedule to minimize retention.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>7. Updates</h2>
-      <p>Privacy practices may evolve as we add features. We will revise this page with the effective date when changes occur.</p>
-    </div>
+      <div class="content-section">
+        <h2>7. Updates</h2>
+        <p>Privacy practices may evolve as we add features. We will revise this page with the effective date when changes occur.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>8. Contact</h2>
-      <p>If you have privacy questions or access requests, please use our contact page so we can respond promptly.</p>
-    </div>
+      <div class="content-section">
+        <h2>8. Contact</h2>
+        <p>If you have privacy questions or access requests, please use our contact page so we can respond promptly.</p>
+      </div>
+    <?php endif; ?>
   </article>
 </main>
 

@@ -10,6 +10,7 @@ $page_title = 'Terms & Conditions – ' . $site_title;
 $meta_desc = $settings['seo_meta_description'] ?? ($settings['tagline'] ?? '');
 $meta_keys = $settings['seo_meta_keywords'] ?? '';
 $canonical = hs_base_url('terms');
+$terms_content = $settings['terms_content'] ?? '';
 ?>
 <!doctype html>
 <html lang="en">
@@ -157,50 +158,54 @@ $canonical = hs_base_url('terms');
     <h1 class="content-title">Terms &amp; Conditions</h1>
     <p class="content-sub">These terms outline how you may use <?= htmlspecialchars($site_title) ?>, including content ownership, user conduct, and the rules that keep our community trustworthy.</p>
 
-    <div class="content-section">
-      <h2>1. Acceptance of terms</h2>
-      <p>By accessing or using this website you agree to abide by these Terms &amp; Conditions, our privacy commitments, and any additional guidelines posted inside the service.</p>
-    </div>
+    <?php if (!empty($terms_content)): ?>
+      <div class="content-section"><?= $terms_content ?></div>
+    <?php else: ?>
+      <div class="content-section">
+        <h2>1. Acceptance of terms</h2>
+        <p>By accessing or using this website you agree to abide by these Terms &amp; Conditions, our privacy commitments, and any additional guidelines posted inside the service.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>2. Use of content</h2>
-      <p>Articles, photos, and videos are provided for your personal use. Republishing, framing, or automated scraping without prior written permission is prohibited.</p>
-      <ul class="content-list">
-        <li>Properly attribute and link back when sharing headlines or excerpts.</li>
-        <li>Commercial syndication requires a license from the publisher.</li>
-        <li>Do not modify our trademarks, branding, or copyright notices.</li>
-      </ul>
-    </div>
+      <div class="content-section">
+        <h2>2. Use of content</h2>
+        <p>Articles, photos, and videos are provided for your personal use. Republishing, framing, or automated scraping without prior written permission is prohibited.</p>
+        <ul class="content-list">
+          <li>Properly attribute and link back when sharing headlines or excerpts.</li>
+          <li>Commercial syndication requires a license from the publisher.</li>
+          <li>Do not modify our trademarks, branding, or copyright notices.</li>
+        </ul>
+      </div>
 
-    <div class="content-section">
-      <h2>3. User accounts</h2>
-      <p>You are responsible for safeguarding your login credentials. Notify us immediately if you suspect unauthorized access so we can protect your account.</p>
-    </div>
+      <div class="content-section">
+        <h2>3. User accounts</h2>
+        <p>You are responsible for safeguarding your login credentials. Notify us immediately if you suspect unauthorized access so we can protect your account.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>4. Submissions and feedback</h2>
-      <p>By sending tips, comments, or media you grant us a non-exclusive, royalty-free right to use and share that material for editorial purposes. You confirm you have the right to provide the submission.</p>
-    </div>
+      <div class="content-section">
+        <h2>4. Submissions and feedback</h2>
+        <p>By sending tips, comments, or media you grant us a non-exclusive, royalty-free right to use and share that material for editorial purposes. You confirm you have the right to provide the submission.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>5. Service availability</h2>
-      <p>We strive for reliable uptime but may modify or suspend features to improve performance or security. We are not liable for losses resulting from downtime or delayed publishing.</p>
-    </div>
+      <div class="content-section">
+        <h2>5. Service availability</h2>
+        <p>We strive for reliable uptime but may modify or suspend features to improve performance or security. We are not liable for losses resulting from downtime or delayed publishing.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>6. Limitation of liability</h2>
-      <p>To the fullest extent permitted by law, <?= htmlspecialchars($site_title) ?> is provided “as is.” We disclaim warranties of accuracy, availability, and fitness for a particular purpose.</p>
-    </div>
+      <div class="content-section">
+        <h2>6. Limitation of liability</h2>
+        <p>To the fullest extent permitted by law, <?= htmlspecialchars($site_title) ?> is provided “as is.” We disclaim warranties of accuracy, availability, and fitness for a particular purpose.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>7. Changes</h2>
-      <p>We may update these terms to reflect operational or legal changes. Material updates will be noted on this page with a refreshed effective date.</p>
-    </div>
+      <div class="content-section">
+        <h2>7. Changes</h2>
+        <p>We may update these terms to reflect operational or legal changes. Material updates will be noted on this page with a refreshed effective date.</p>
+      </div>
 
-    <div class="content-section">
-      <h2>8. Contact</h2>
-      <p>If you have questions about these terms, please reach out through our contact page so we can assist you quickly.</p>
-    </div>
+      <div class="content-section">
+        <h2>8. Contact</h2>
+        <p>If you have questions about these terms, please reach out through our contact page so we can assist you quickly.</p>
+      </div>
+    <?php endif; ?>
   </article>
 </main>
 

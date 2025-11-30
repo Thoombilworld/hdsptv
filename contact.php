@@ -9,6 +9,7 @@ $site_title = $settings['site_title'] ?? 'NEWS HDSPTV';
 $host = parse_url(HS_BASE_URL, PHP_URL_HOST) ?: 'example.com';
 $contact_email = $settings['contact_email'] ?? ('support@' . $host);
 $contact_phone = $settings['contact_phone'] ?? '+91 00000 00000';
+$contact_content = $settings['contact_content'] ?? '';
 $page_title = 'Contact ' . $site_title;
 $meta_desc = $settings['seo_meta_description'] ?? ($settings['tagline'] ?? '');
 $meta_keys = $settings['seo_meta_keywords'] ?? '';
@@ -157,7 +158,11 @@ $canonical = hs_base_url('contact');
   <div class="grid">
     <section class="card">
       <h1>Contact <?= htmlspecialchars($site_title) ?></h1>
-      <p>We want to hear your feedback, story tips, and partnership ideas. Choose the best channel below and our editorial or support team will respond as soon as possible.</p>
+      <?php if (!empty($contact_content)): ?>
+        <div class="content-section"><?= $contact_content ?></div>
+      <?php else: ?>
+        <p>We want to hear your feedback, story tips, and partnership ideas. Choose the best channel below and our editorial or support team will respond as soon as possible.</p>
+      <?php endif; ?>
 
       <div class="contact-block">
         <div class="contact-icon">@</div>
