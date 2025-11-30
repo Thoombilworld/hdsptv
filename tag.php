@@ -3,6 +3,7 @@ require __DIR__ . '/bootstrap.php';
 
 $settings = hs_settings();
 $db = hs_db();
+$languageCode = hs_current_language_code();
 
 $slug = trim($_GET['slug'] ?? '');
 if ($slug === '') {
@@ -76,7 +77,7 @@ $meta_keys = ($settings['seo_meta_keywords'] ?? '') . ', ' . $tag['name'];
 $canonical = hs_tag_url($tag['slug']);
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($languageCode) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($page_title) ?></title>
@@ -84,6 +85,7 @@ $canonical = hs_tag_url($tag['slug']);
   <meta name="keywords" content="<?= htmlspecialchars($meta_keys) ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
+  <link rel="icon" href="<?= htmlspecialchars($settings['favicon'] ?? hs_base_url('assets/images/favicon.png')) ?>">
   <link rel="stylesheet" href="<?= hs_base_url('assets/css/style.css') ?>">
   <style>
     :root {

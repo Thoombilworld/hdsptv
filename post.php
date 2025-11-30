@@ -155,6 +155,7 @@ if (!empty($tags)) {
 $categoryName = $post['category_name'] ?: 'News';
 $categorySlug = $post['category_slug'] ?: strtolower($categoryName);
 $canonical = hs_news_url($post['slug']);
+$languageCode = hs_current_language_code();
 
 $og_image = '';
 if (!empty($post['image_main'])) {
@@ -164,7 +165,7 @@ if (!empty($post['image_main'])) {
 }
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($languageCode) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($page_title) ?></title>
@@ -172,6 +173,7 @@ if (!empty($post['image_main'])) {
   <meta name="keywords" content="<?= htmlspecialchars($meta_keys) ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
+  <link rel="icon" href="<?= htmlspecialchars($settings['favicon'] ?? hs_base_url('assets/images/favicon.png')) ?>">
 
   <?php if ($og_image): ?>
     <meta property="og:image" content="<?= htmlspecialchars($og_image) ?>">

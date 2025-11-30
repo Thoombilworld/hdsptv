@@ -74,14 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $theme = hs_current_theme();
 $palette = hs_theme_palette($theme);
 $settings = hs_settings();
+$languageCode = hs_current_language_code();
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($languageCode) ?>">
 <head>
   <meta charset="utf-8">
   <title>User Dashboard – <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="<?= hs_base_url('assets/css/style.css') ?>">
+  <link rel="icon" href="<?= htmlspecialchars($settings['favicon'] ?? hs_base_url('assets/images/favicon.png')) ?>">
   <style>
     :root {
       --hs-primary: <?= $palette['primary'] ?>;

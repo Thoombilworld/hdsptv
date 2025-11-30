@@ -85,9 +85,18 @@ function hs_supported_languages()
 function hs_current_language_code()
 {
     $supported = hs_supported_languages();
+    $settings = hs_settings();
+
     $requested = strtolower(trim($_GET['lang'] ?? ''));
     if ($requested !== '' && isset($supported[$requested])) {
         $_SESSION['hs_lang'] = $requested;
+    }
+
+    if (!isset($_SESSION['hs_lang']) && !empty($settings['default_language'])) {
+        $candidate = strtolower(trim($settings['default_language']));
+        if (isset($supported[$candidate])) {
+            $_SESSION['hs_lang'] = $candidate;
+        }
     }
 
     $selected = $_SESSION['hs_lang'] ?? array_key_first($supported);
@@ -173,6 +182,8 @@ function hs_settings($force_reload = false)
         'tagline'    => 'News for India, GCC, Kerala & the World',
         'logo'       => hs_base_url('assets/images/logo.png'),
         'theme'      => 'dark',
+        'favicon'    => hs_base_url('assets/images/favicon.png'),
+        'default_language' => 'en',
     ];
 
     if (defined('HS_INSTALLED') && HS_INSTALLED) {

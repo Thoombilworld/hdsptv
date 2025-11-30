@@ -6,6 +6,7 @@ $settings = hs_settings();
 $db = hs_db();
 $theme = hs_current_theme();
 $palette = hs_theme_palette($theme);
+$languageCode = hs_current_language_code();
 
 $q = trim($_GET['q'] ?? '');
 $posts = [];
@@ -69,7 +70,7 @@ $meta_keys = $settings['seo_meta_keywords'] ?? '';
 $canonical = hs_search_url($q);
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($languageCode) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($page_title) ?></title>
@@ -77,6 +78,7 @@ $canonical = hs_search_url($q);
   <meta name="keywords" content="<?= htmlspecialchars($meta_keys) ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
+  <link rel="icon" href="<?= htmlspecialchars($settings['favicon'] ?? hs_base_url('assets/images/favicon.png')) ?>">
   <link rel="stylesheet" href="<?= hs_base_url('assets/css/style.css') ?>">
   <style>
     :root {

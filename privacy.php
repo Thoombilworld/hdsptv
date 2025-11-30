@@ -11,9 +11,10 @@ $meta_desc = $settings['seo_meta_description'] ?? ($settings['tagline'] ?? '');
 $meta_keys = $settings['seo_meta_keywords'] ?? '';
 $canonical = hs_base_url('privacy');
 $privacy_content = $settings['privacy_content'] ?? '';
+$languageCode = hs_current_language_code();
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($languageCode) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($page_title) ?></title>
@@ -21,6 +22,7 @@ $privacy_content = $settings['privacy_content'] ?? '';
   <meta name="keywords" content="<?= htmlspecialchars($meta_keys) ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
+  <link rel="icon" href="<?= htmlspecialchars($settings['favicon'] ?? hs_base_url('assets/images/favicon.png')) ?>">
   <link rel="stylesheet" href="<?= hs_base_url('assets/css/style.css') ?>">
   <style>
     :root {
