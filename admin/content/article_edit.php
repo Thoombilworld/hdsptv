@@ -120,6 +120,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Edit Article – NEWS HDSPTV</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="<?= hs_base_url('assets/css/style.css') ?>">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-3gJwYp4d6dk+Nr6dcw3AV/Qdi03y7P03a06f5dFtg3E=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
 </head>
 <body style="max-width:900px;margin:20px auto;padding:0 16px;">
   <h1>Edit Article</h1>
@@ -160,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <textarea name="excerpt" style="width:100%;height:60px;"><?= htmlspecialchars($post['excerpt']) ?></textarea><br><br>
 
     <label>Content (HTML allowed)</label><br>
-    <textarea name="content" style="width:100%;height:200px;"><?= htmlspecialchars($post['content']) ?></textarea><br><br>
+    <textarea class="summernote" name="content" style="width:100%;height:200px;"><?= htmlspecialchars($post['content']) ?></textarea><br><br>
 
     <label>Main Image</label><br>
     <?php if (!empty($post['image_main'])): ?>
@@ -186,5 +189,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <button type="submit">Update Article</button>
   </form>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      $('.summernote').summernote({
+        placeholder: 'Write article content here...',
+        height: 320,
+        minHeight: 240,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'italic', 'clear']],
+          ['fontname', ['fontname']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['codeview']]
+        ]
+      });
+    });
+  </script>
 </body>
 </html>

@@ -53,6 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Legal Pages – NEWS HDSPTV</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="<?= hs_base_url('assets/css/style.css') ?>">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-3gJwYp4d6dk+Nr6dcw3AV/Qdi03y7P03a06f5dFtg3E=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
   <style>
     body { margin:0; font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#0B1120; color:#E5E7EB; }
     header { padding:12px 20px; border-bottom:1px solid #111827; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
@@ -97,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p>Edit or replace the Terms copy that appears on the public terms page. HTML is allowed.</p>
     <form method="post">
       <input type="hidden" name="form" value="terms">
-      <textarea name="content" placeholder="Enter Terms &amp; Conditions HTML or text..."><?= htmlspecialchars($settings['terms_content'] ?? '') ?></textarea>
+      <textarea class="summernote" name="content" placeholder="Enter Terms &amp; Conditions HTML or text..."><?= htmlspecialchars($settings['terms_content'] ?? '') ?></textarea>
       <div class="actions">
         <button type="submit" name="action" value="save">Save Terms</button>
         <button type="submit" name="action" value="delete" onclick="return confirm('Remove custom Terms content? Default copy will be used.');">Delete Custom Terms</button>
@@ -110,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p>Control the privacy copy, including data practices and contact details. HTML is allowed.</p>
     <form method="post">
       <input type="hidden" name="form" value="privacy">
-      <textarea name="content" placeholder="Enter Privacy Policy HTML or text..."><?= htmlspecialchars($settings['privacy_content'] ?? '') ?></textarea>
+      <textarea class="summernote" name="content" placeholder="Enter Privacy Policy HTML or text..."><?= htmlspecialchars($settings['privacy_content'] ?? '') ?></textarea>
       <div class="actions">
         <button type="submit" name="action" value="save">Save Privacy</button>
         <button type="submit" name="action" value="delete" onclick="return confirm('Remove custom Privacy content? Default copy will be used.');">Delete Custom Privacy</button>
@@ -123,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p>Optional custom HTML/text displayed at the top of the public contact page.</p>
     <form method="post">
       <input type="hidden" name="form" value="contact_content">
-      <textarea name="content" placeholder="Add intro, office hours, or location details..."><?= htmlspecialchars($settings['contact_content'] ?? '') ?></textarea>
+      <textarea class="summernote" name="content" placeholder="Add intro, office hours, or location details..."><?= htmlspecialchars($settings['contact_content'] ?? '') ?></textarea>
       <div class="actions">
         <button type="submit" name="action" value="save">Save Contact Content</button>
         <button type="submit" name="action" value="delete" onclick="return confirm('Remove custom Contact content? Default copy will be used.');">Delete Custom Contact Content</button>
@@ -148,5 +151,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
   </section>
 </main>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    $('.summernote').summernote({
+      placeholder: 'Write content here...',
+      height: 240,
+      minHeight: 160,
+      toolbar: [
+        ['style', ['style']],
+        ['font', ['bold', 'underline', 'italic', 'clear']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['insert', ['link']],
+        ['view', ['codeview']]
+      ]
+    });
+  });
+</script>
 </body>
 </html>
