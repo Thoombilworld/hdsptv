@@ -4,10 +4,11 @@ require __DIR__ . '/bootstrap.php';
 $settings = hs_settings();
 $db = hs_db();
 $languageCode = hs_current_language_code();
+$languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
 
 $slug = trim($_GET['slug'] ?? '');
 if ($slug === '') {
-    echo "Category not specified.";
+    echo hs_t('category_not_specified', 'Category not specified.');
     exit;
 }
 
@@ -18,7 +19,7 @@ $res = mysqli_stmt_get_result($stmt);
 $category = $res ? mysqli_fetch_assoc($res) : null;
 
 if (!$category) {
-    echo "Category not found.";
+    echo hs_t('category_not_found', 'Category not found.');
     exit;
 }
 
@@ -54,7 +55,7 @@ $render_ad = function ($slot, $label = '') use ($ad_for) {
     } elseif (!empty($ad['image_url'])) {
         $href = htmlspecialchars($ad['link_url'] ?: '#');
         $html .= '<a href="' . $href . '" target="_blank" rel="noopener">';
-        $html .= '<img src="' . htmlspecialchars(hs_base_url($ad['image_url'])) . '" alt="Advertisement">';
+        $html .= '<img src="' . htmlspecialchars(hs_base_url($ad['image_url'])) . '" alt="' . htmlspecialchars(hs_t('advertisement', 'Advertisement')) . '">';
         $html .= '</a>';
     }
     if ($label !== '') {
@@ -76,7 +77,7 @@ $meta_keys = ($settings['seo_meta_keywords'] ?? '') . ', ' . $category['name'];
 $canonical = hs_category_url($category['slug']);
 ?>
 <!doctype html>
-<html lang="<?= htmlspecialchars($languageCode) ?>">
+<html lang="<?= htmlspecialchars($languageCode) ?>" dir="<?= htmlspecialchars($languageDir) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($page_title) ?></title>
@@ -296,49 +297,55 @@ $canonical = hs_category_url($category['slug']);
   <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   <div class="header-right">
     <nav class="nav-main">
-      <?php foreach (hs_primary_nav_items() as $item): ?>
-        <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars($item['label']) ?></a>
-      <?php endforeach; ?>
+<?php foreach (hs_primary_nav_items() as $item): ?>
+  <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars(hs_t('nav_' . $item['slug'], $item['label'])) ?></a>
+<?php endforeach; ?>
     </nav>
     <div class="nav-utilities stack-mobile" style="align-items:flex-start; width:100%;">
-      <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
-        <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
-        <button type="submit">Search</button>
-      </form>
-      <select class="language-switcher" aria-label="Language">
-        <option>English</option>
-        <option>العربية</option>
-        <option>മലയാളം</option>
-      </select>
-    </div>
+        <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
+          <input type="text" name="q" placeholder="<?= htmlspecialchars(hs_t('search_placeholder', 'Search news...')) ?>" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
+          <button type="submit"><?= htmlspecialchars(hs_t('search_label', 'Search')) ?></button>
+        </form>
+        <form method="get" action="" class="language-form" style="display:flex; align-items:center; gap:6px;">
+          <label class="language-label sr-only" for="language-select"><?= htmlspecialchars(hs_t('language_label', 'Language')) ?></label>
+          <select id="language-select" class="language-switcher" name="lang" aria-label="<?= htmlspecialchars(hs_t('language_label', 'Language')) ?>" onchange="this.form.submit()">
+            <?php foreach (hs_supported_languages() as $code => $label): ?>
+              <option value="<?= htmlspecialchars($code) ?>" <?= $languageCode === $code ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+            <?php endforeach; ?>
+          </select>
+          <?php foreach ($_GET as $key => $value): if ($key === 'lang') continue; ?>
+            <input type="hidden" name="<?= htmlspecialchars($key) ?>" value="<?= htmlspecialchars($value) ?>">
+          <?php endforeach; ?>
+        </form>
+      </div>
     <div class="user-bar">
       <?php $u = hs_current_user(); ?>
       <?php if ($u): ?>
         <?= htmlspecialchars($u['name']) ?>
         <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
-        · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
-        · <a href="<?= hs_logout_url() ?>">Logout</a>
+        · <a href="<?= hs_dashboard_url() ?>"><?= htmlspecialchars(hs_t('nav_dashboard', 'Dashboard')) ?></a>
+        · <a href="<?= hs_logout_url() ?>"><?= htmlspecialchars(hs_t('nav_logout', 'Logout')) ?></a>
       <?php else: ?>
-        <a href="<?= hs_login_url() ?>">Login</a> ·
-        <a href="<?= hs_register_url() ?>">Register</a>
+        <a href="<?= hs_login_url() ?>"><?= htmlspecialchars(hs_t('nav_login', 'Login')) ?></a> ·
+        <a href="<?= hs_register_url() ?>"><?= htmlspecialchars(hs_t('nav_register', 'Register')) ?></a>
       <?php endif; ?>
     </div>
   </div>
 </header>
 
-<?= $render_ad('global_top', 'Advertisement') ?>
+<?= $render_ad('global_top', hs_t('advertisement', 'Advertisement')) ?>
 
 <main class="page">
   <div class="layout-category">
     <div class="category-header">
-      <div class="category-title"><?= htmlspecialchars($category['name']) ?></div>
-      <div class="category-sub">Latest stories from <?= htmlspecialchars($category['name']) ?></div>
+      <div class="category-title"><?= htmlspecialchars(hs_t('category_heading', '{category} News', ['category' => $category['name']])) ?></div>
+      <div class="category-sub"><?= htmlspecialchars(hs_t('category_latest', 'Latest stories from {category}', ['category' => $category['name']])) ?></div>
     </div>
 
-    <?= $render_ad('category_top', 'Advertisement') ?>
+    <?= $render_ad('category_top', hs_t('advertisement', 'Advertisement')) ?>
 
     <?php if (empty($posts)): ?>
-      <p>No posts in this category yet.</p>
+      <p><?= htmlspecialchars(hs_t('category_empty', 'No posts in this category yet.')) ?></p>
     <?php else: ?>
       <div class="card-grid">
         <?php foreach ($posts as $p): ?>
@@ -364,11 +371,11 @@ $canonical = hs_category_url($category['slug']);
       </div>
     <?php endif; ?>
 
-    <?= $render_ad('category_inline', 'Advertisement') ?>
+    <?= $render_ad('category_inline', hs_t('advertisement', 'Advertisement')) ?>
   </div>
 </main>
 
-<?= $render_ad('global_footer', 'Advertisement') ?>
+<?= $render_ad('global_footer', hs_t('advertisement', 'Advertisement')) ?>
 
 <footer>
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>

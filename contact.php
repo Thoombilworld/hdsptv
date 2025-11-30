@@ -15,9 +15,10 @@ $meta_desc = $settings['seo_meta_description'] ?? ($settings['tagline'] ?? '');
 $meta_keys = $settings['seo_meta_keywords'] ?? '';
 $canonical = hs_base_url('contact');
 $languageCode = hs_current_language_code();
+$languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
 ?>
 <!doctype html>
-<html lang="<?= htmlspecialchars($languageCode) ?>">
+<html lang="<?= htmlspecialchars($languageCode) ?>" dir="<?= htmlspecialchars($languageDir) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($page_title) ?></title>
@@ -108,53 +109,38 @@ $languageCode = hs_current_language_code();
   </style>
 </head>
 <body>
-<header>
-  <div class="top-left">
-    <a href="<?= hs_base_url('index.php') ?>" class="logo-link">
-      <div class="logo-mark">H</div>
-      <div class="logo-text">
-        <div class="logo-text-main">NEWS HDSPTV</div>
-        <div class="logo-text-tag"><?= htmlspecialchars($settings['tagline'] ?? 'GCC • INDIA • KERALA • WORLD') ?></div>
-      </div>
-    </a>
-  </div>
-  <nav class="nav-main">
-    <a href="<?= hs_base_url('index.php#top') ?>">Home</a>
-    <a href="<?= hs_category_url('') ?>">India</a>
-    <a href="<?= hs_category_url('') ?>">GCC</a>
-    <a href="<?= hs_category_url('') ?>">Kerala</a>
-    <a href="<?= hs_category_url('') ?>">World</a>
-    <a href="<?= hs_category_url('') ?>">Sports</a>
-    <a href="<?= hs_category_url('') ?>">Entertainment</a>
-    <a href="<?= hs_category_url('') ?>">Business</a>
-    <a href="<?= hs_category_url('') ?>">Technology</a>
-    <a href="<?= hs_category_url('') ?>">Lifestyle</a>
-    <a href="<?= hs_category_url('') ?>">Health</a>
-    <a href="<?= hs_category_url('') ?>">Travel</a>
-    <a href="<?= hs_category_url('') ?>">Auto</a>
-    <a href="<?= hs_category_url('') ?>">Opinion</a>
-    <a href="<?= hs_category_url('') ?>">Politics</a>
-    <a href="<?= hs_category_url('') ?>">Crime</a>
-    <a href="<?= hs_category_url('') ?>">Education</a>
-    <a href="<?= hs_category_url('') ?>">Religion</a>
-  </nav>
-  <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
-    <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
-    <button type="submit">Search</button>
-  </form>
-  <div class="user-bar">
-    <?php $u = hs_current_user(); ?>
-    <?php if ($u): ?>
-      <?= htmlspecialchars($u['name']) ?>
-      <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
-      · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
-      · <a href="<?= hs_logout_url() ?>">Logout</a>
-    <?php else: ?>
-      <a href="<?= hs_login_url() ?>">Login</a> ·
-      <a href="<?= hs_register_url() ?>">Register</a>
-    <?php endif; ?>
-  </div>
-</header>
+  <header>
+    <div class="top-left">
+      <a href="<?= hs_base_url('index.php') ?>" class="logo-link">
+        <div class="logo-mark">H</div>
+        <div class="logo-text">
+          <div class="logo-text-main">NEWS HDSPTV</div>
+          <div class="logo-text-tag"><?= htmlspecialchars($settings['tagline'] ?? 'GCC • INDIA • KERALA • WORLD') ?></div>
+        </div>
+      </a>
+    </div>
+    <nav class="nav-main">
+      <?php foreach (hs_primary_nav_items() as $item): ?>
+        <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars(hs_t('nav_' . $item['slug'], $item['label'])) ?></a>
+      <?php endforeach; ?>
+    </nav>
+    <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
+      <input type="text" name="q" placeholder="<?= htmlspecialchars(hs_t('search_placeholder', 'Search news...')) ?>" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
+      <button type="submit"><?= htmlspecialchars(hs_t('search_label', 'Search')) ?></button>
+    </form>
+    <div class="user-bar">
+      <?php $u = hs_current_user(); ?>
+      <?php if ($u): ?>
+        <?= htmlspecialchars($u['name']) ?>
+        <?php if (!empty($u['is_premium'])): ?> · <strong><?= htmlspecialchars(hs_t('nav_premium', 'Premium')) ?></strong><?php endif; ?>
+        · <a href="<?= hs_dashboard_url() ?>"><?= htmlspecialchars(hs_t('nav_dashboard', 'Dashboard')) ?></a>
+        · <a href="<?= hs_logout_url() ?>"><?= htmlspecialchars(hs_t('nav_logout', 'Logout')) ?></a>
+      <?php else: ?>
+        <a href="<?= hs_login_url() ?>"><?= htmlspecialchars(hs_t('nav_login', 'Login')) ?></a> ·
+        <a href="<?= hs_register_url() ?>"><?= htmlspecialchars(hs_t('nav_register', 'Register')) ?></a>
+      <?php endif; ?>
+    </div>
+  </header>
 
 <main class="page">
   <div class="grid">
@@ -239,7 +225,7 @@ $languageCode = hs_current_language_code();
 
 <footer>
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
-  <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($site_title) ?>. All rights reserved.</div>
+  <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($site_title) ?>. <?= htmlspecialchars(hs_t('footer_rights', 'All rights reserved.')) ?></div>
 </footer>
 </body>
 </html>

@@ -75,9 +75,10 @@ $theme = hs_current_theme();
 $palette = hs_theme_palette($theme);
 $settings = hs_settings();
 $languageCode = hs_current_language_code();
+$languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
 ?>
 <!doctype html>
-<html lang="<?= htmlspecialchars($languageCode) ?>">
+<html lang="<?= htmlspecialchars($languageCode) ?>" dir="<?= htmlspecialchars($languageDir) ?>">
 <head>
   <meta charset="utf-8">
   <title>User Dashboard – <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?></title>

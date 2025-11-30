@@ -12,9 +12,10 @@ $meta_keys = $settings['seo_meta_keywords'] ?? '';
 $canonical = hs_base_url('privacy');
 $privacy_content = $settings['privacy_content'] ?? '';
 $languageCode = hs_current_language_code();
+$languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
 ?>
 <!doctype html>
-<html lang="<?= htmlspecialchars($languageCode) ?>">
+<html lang="<?= htmlspecialchars($languageCode) ?>" dir="<?= htmlspecialchars($languageDir) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($page_title) ?></title>
@@ -212,7 +213,7 @@ $languageCode = hs_current_language_code();
 
 <footer>
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
-  <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($site_title) ?>. All rights reserved.</div>
+  <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($site_title) ?>. <?= htmlspecialchars(hs_t('footer_rights', 'All rights reserved.')) ?></div>
 </footer>
 </body>
 </html>

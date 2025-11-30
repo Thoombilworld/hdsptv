@@ -82,6 +82,60 @@ function hs_supported_languages()
     ];
 }
 
+function hs_is_rtl($code = null)
+{
+    $rtl_codes = ['ar', 'fa', 'ur', 'he'];
+    $code = $code ?: hs_current_language_code();
+    return in_array(strtolower($code), $rtl_codes, true);
+}
+
+function hs_translation_path($code)
+{
+    return __DIR__ . '/lang/' . strtolower($code) . '.php';
+}
+
+function hs_translations($force_reload = false)
+{
+    static $cache = [];
+    $code = hs_current_language_code();
+
+    if (!$force_reload && isset($cache[$code])) {
+        return $cache[$code];
+    }
+
+    $translations = [];
+    $fallbackPath = hs_translation_path('en');
+    if (is_readable($fallbackPath)) {
+        $base = include $fallbackPath;
+        if (is_array($base)) {
+            $translations = $base;
+        }
+    }
+
+    $localePath = hs_translation_path($code);
+    if ($code !== 'en' && is_readable($localePath)) {
+        $locale = include $localePath;
+        if (is_array($locale)) {
+            $translations = array_merge($translations, $locale);
+        }
+    }
+
+    $cache[$code] = $translations;
+    return $translations;
+}
+
+function hs_t($key, $default = '', array $replacements = [])
+{
+    $translations = hs_translations();
+    $text = $translations[$key] ?? $default;
+
+    foreach ($replacements as $search => $value) {
+        $text = str_replace('{' . $search . '}', $value, $text);
+    }
+
+    return $text !== '' ? $text : $default;
+}
+
 function hs_current_language_code()
 {
     $supported = hs_supported_languages();

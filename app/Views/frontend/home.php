@@ -7,6 +7,7 @@
   };
 
   $languageCode = hs_current_language_code();
+  $languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
 
   function hs_render_ad($ad) {
       if (!$ad) return '';
@@ -24,7 +25,7 @@
   }
 ?>
 <!doctype html>
-<html lang="<?= htmlspecialchars($languageCode) ?>">
+<html lang="<?= htmlspecialchars($languageCode) ?>" dir="<?= htmlspecialchars($languageDir) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?></title>
@@ -858,17 +859,17 @@
     <div class="header-right">
       <nav class="nav-main">
         <?php foreach (hs_primary_nav_items() as $item): ?>
-          <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars($item['label']) ?></a>
+          <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars(hs_t('nav_' . $item['slug'], $item['label'])) ?></a>
         <?php endforeach; ?>
       </nav>
       <div class="nav-utilities stack-mobile">
         <form class="nav-search" action="<?= hs_search_url() ?>" method="get" data-testid="nav-search-form">
-          <label class="sr-only" for="nav-search">Search</label>
-          <input id="nav-search" type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>" data-testid="nav-search-input">
-          <button type="submit">Search</button>
+          <label class="sr-only" for="nav-search"><?= htmlspecialchars(hs_t('search_label', 'Search')) ?></label>
+          <input id="nav-search" type="text" name="q" placeholder="<?= htmlspecialchars(hs_t('search_placeholder', 'Search news...')) ?>" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>" data-testid="nav-search-input">
+          <button type="submit"><?= htmlspecialchars(hs_t('search_label', 'Search')) ?></button>
         </form>
         <form class="language-form" method="get" action="">
-          <label class="language-label" for="language-select">Language</label>
+          <label class="language-label" for="language-select"><?= htmlspecialchars(hs_t('language_label', 'Language')) ?></label>
           <select id="language-select" class="language-switcher" name="lang" aria-label="Language" onchange="this.form.submit()" data-testid="language-switcher">
             <?php foreach (hs_supported_languages() as $code => $label): ?>
               <option value="<?= htmlspecialchars($code) ?>" <?= $languageCode === $code ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
@@ -883,12 +884,12 @@
         <?php $u = hs_current_user(); ?>
         <?php if ($u): ?>
           <?= htmlspecialchars($u['name']) ?>
-          <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
-          · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
-          · <a href="<?= hs_logout_url() ?>">Logout</a>
+          <?php if (!empty($u['is_premium'])): ?> · <strong><?= htmlspecialchars(hs_t('nav_premium', 'Premium')) ?></strong><?php endif; ?>
+          · <a href="<?= hs_dashboard_url() ?>"><?= htmlspecialchars(hs_t('nav_dashboard', 'Dashboard')) ?></a>
+          · <a href="<?= hs_logout_url() ?>"><?= htmlspecialchars(hs_t('nav_logout', 'Logout')) ?></a>
         <?php else: ?>
-          <a href="<?= hs_login_url() ?>">Login</a> ·
-          <a href="<?= hs_register_url() ?>">Register</a>
+          <a href="<?= hs_login_url() ?>"><?= htmlspecialchars(hs_t('nav_login', 'Login')) ?></a> ·
+          <a href="<?= hs_register_url() ?>"><?= htmlspecialchars(hs_t('nav_register', 'Register')) ?></a>
         <?php endif; ?>
       </div>
     </div>
@@ -903,7 +904,7 @@
 
 <?php if (!empty($breaking)): ?>
   <div class="ticker">
-    <div class="ticker-label">Breaking</div>
+    <div class="ticker-label"><?= htmlspecialchars(hs_t('breaking_title', 'Breaking')) ?></div>
     <div class="ticker-items">
       <?php foreach ($breaking as $b): ?>
         <div class="ticker-item">• <?= htmlspecialchars($b['title'] ?? '') ?></div>
@@ -917,8 +918,8 @@
     <section class="column">
       <div class="card">
         <div class="section-shell">
-          <div class="pill"><span class="pill-dot"></span> Top Featured Slider</div>
-          <h2>Automatic rotation</h2>
+          <div class="pill"><span class="pill-dot"></span> <?= htmlspecialchars(hs_t('featured_slider', 'Top Featured Slider')) ?></div>
+          <h2><?= htmlspecialchars(hs_t('featured_rotation', 'Automatic rotation')) ?></h2>
         </div>
         <?php if (!empty($slider_posts)): ?>
           <div class="slider-shell" data-testid="featured-slider">
@@ -930,12 +931,12 @@
                       <?php if (!empty($p['image_main'])): ?>
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       <?php else: ?>
-                        <div class="slider-placeholder">Top Story</div>
+                        <div class="slider-placeholder"><?= htmlspecialchars(hs_t('featured_placeholder', 'Top Story')) ?></div>
                       <?php endif; ?>
                     </div>
                     <div class="slider-body">
                       <div class="slider-kicker">
-                        <?= htmlspecialchars($p['category_name'] ?: 'News') ?>
+                        <?= htmlspecialchars($p['category_name'] ?: hs_t('featured_category_placeholder', 'News')) ?>
                         <?php if (!empty($p['region']) && $p['region'] !== 'global'): ?>
                           · <?= strtoupper(htmlspecialchars($p['region'])) ?>
                         <?php endif; ?>
@@ -972,7 +973,7 @@
                       <?php endif; ?>
                     </div>
                     <div>
-                      <div class="slider-mini-meta"><?= htmlspecialchars($mini['category_name'] ?: 'News') ?></div>
+                      <div class="slider-mini-meta"><?= htmlspecialchars($mini['category_name'] ?: hs_t('featured_category_placeholder', 'News')) ?></div>
                       <div class="slider-mini-title"><a href="<?= hs_news_url($mini['slug']) ?>"><?= htmlspecialchars($mini['title']) ?></a></div>
                       <div class="slider-mini-date"><?= hs_post_date($mini) ?></div>
                     </div>

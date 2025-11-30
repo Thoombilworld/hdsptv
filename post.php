@@ -7,7 +7,7 @@ $db = hs_db();
 $slug = trim($_GET['slug'] ?? '');
 if ($slug === '') {
     http_response_code(404);
-    echo "Article not found.";
+    echo hs_t('article_not_found', 'Article not found.');
     exit;
 }
 
@@ -23,7 +23,7 @@ $post = $res ? mysqli_fetch_assoc($res) : null;
 
 if (!$post) {
     http_response_code(404);
-    echo "Article not found.";
+    echo hs_t('article_not_found', 'Article not found.');
     exit;
 }
 
@@ -122,7 +122,7 @@ $render_ad = function ($slot, $label = '') use ($ad_for) {
     } elseif (!empty($ad['image_url'])) {
         $href = htmlspecialchars($ad['link_url'] ?: '#');
         $html .= '<a href="' . $href . '" target="_blank" rel="noopener">';
-        $html .= '<img src="' . htmlspecialchars(hs_base_url($ad['image_url'])) . '" alt="Advertisement">';
+        $html .= '<img src="' . htmlspecialchars(hs_base_url($ad['image_url'])) . '" alt="' . htmlspecialchars(hs_t('advertisement', 'Advertisement')) . '">';
         $html .= '</a>';
     }
     if ($label !== '') {
@@ -156,6 +156,7 @@ $categoryName = $post['category_name'] ?: 'News';
 $categorySlug = $post['category_slug'] ?: strtolower($categoryName);
 $canonical = hs_news_url($post['slug']);
 $languageCode = hs_current_language_code();
+$languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
 
 $og_image = '';
 if (!empty($post['image_main'])) {
@@ -165,7 +166,7 @@ if (!empty($post['image_main'])) {
 }
 ?>
 <!doctype html>
-<html lang="<?= htmlspecialchars($languageCode) ?>">
+<html lang="<?= htmlspecialchars($languageCode) ?>" dir="<?= htmlspecialchars($languageDir) ?>">
 <head>
   <meta charset="utf-8">
   <title><?= htmlspecialchars($page_title) ?></title>
@@ -504,38 +505,44 @@ if (!empty($post['image_main'])) {
   </div>
   <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   <div class="header-right">
-    <nav class="nav-main">
-      <?php foreach (hs_primary_nav_items() as $item): ?>
-        <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars($item['label']) ?></a>
-      <?php endforeach; ?>
-    </nav>
-    <div class="nav-utilities stack-mobile" style="align-items:flex-start; width:100%;">
-      <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
-        <input type="text" name="q" placeholder="Search news..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
-        <button type="submit">Search</button>
-      </form>
-      <select class="language-switcher" aria-label="Language">
-        <option>English</option>
-        <option>العربية</option>
-        <option>മലയാളം</option>
-      </select>
+      <nav class="nav-main">
+        <?php foreach (hs_primary_nav_items() as $item): ?>
+          <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars(hs_t('nav_' . $item['slug'], $item['label'])) ?></a>
+        <?php endforeach; ?>
+      </nav>
+      <div class="nav-utilities stack-mobile" style="align-items:flex-start; width:100%;">
+        <form class="nav-search" action="<?= hs_search_url() ?>" method="get">
+          <input type="text" name="q" placeholder="<?= htmlspecialchars(hs_t('search_placeholder', 'Search news...')) ?>" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
+          <button type="submit"><?= htmlspecialchars(hs_t('search_label', 'Search')) ?></button>
+        </form>
+        <form method="get" action="" class="language-form" style="display:flex; align-items:center; gap:6px;">
+          <label class="language-label sr-only" for="language-select"><?= htmlspecialchars(hs_t('language_label', 'Language')) ?></label>
+          <select id="language-select" class="language-switcher" name="lang" aria-label="<?= htmlspecialchars(hs_t('language_label', 'Language')) ?>" onchange="this.form.submit()">
+            <?php foreach (hs_supported_languages() as $code => $label): ?>
+              <option value="<?= htmlspecialchars($code) ?>" <?= $languageCode === $code ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+            <?php endforeach; ?>
+          </select>
+          <?php foreach ($_GET as $key => $value): if ($key === 'lang') continue; ?>
+            <input type="hidden" name="<?= htmlspecialchars($key) ?>" value="<?= htmlspecialchars($value) ?>">
+          <?php endforeach; ?>
+        </form>
+      </div>
+      <div class="user-bar">
+        <?php $u = hs_current_user(); ?>
+        <?php if ($u): ?>
+          <?= htmlspecialchars($u['name']) ?>
+          <?php if (!empty($u['is_premium'])): ?> · <strong><?= htmlspecialchars(hs_t('nav_premium', 'Premium')) ?></strong><?php endif; ?>
+          · <a href="<?= hs_dashboard_url() ?>"><?= htmlspecialchars(hs_t('nav_dashboard', 'Dashboard')) ?></a>
+          · <a href="<?= hs_logout_url() ?>"><?= htmlspecialchars(hs_t('nav_logout', 'Logout')) ?></a>
+        <?php else: ?>
+          <a href="<?= hs_login_url() ?>"><?= htmlspecialchars(hs_t('nav_login', 'Login')) ?></a> ·
+          <a href="<?= hs_register_url() ?>"><?= htmlspecialchars(hs_t('nav_register', 'Register')) ?></a>
+        <?php endif; ?>
+      </div>
     </div>
-    <div class="user-bar">
-      <?php $u = hs_current_user(); ?>
-      <?php if ($u): ?>
-        <?= htmlspecialchars($u['name']) ?>
-        <?php if (!empty($u['is_premium'])): ?> · <strong>Premium</strong><?php endif; ?>
-        · <a href="<?= hs_dashboard_url() ?>">Dashboard</a>
-        · <a href="<?= hs_logout_url() ?>">Logout</a>
-      <?php else: ?>
-        <a href="<?= hs_login_url() ?>">Login</a> ·
-        <a href="<?= hs_register_url() ?>">Register</a>
-      <?php endif; ?>
-    </div>
-  </div>
-</header>
+  </header>
 
-<?= $render_ad('global_top', 'Advertisement') ?>
+  <?= $render_ad('global_top', hs_t('advertisement', 'Advertisement')) ?>
 
 <main class="page">
   <div class="layout-article">
@@ -545,7 +552,7 @@ if (!empty($post['image_main'])) {
           <img src="<?= hs_base_url($post['image_main']) ?>" alt="<?= htmlspecialchars($post['title']) ?>">
         </div>
       <?php endif; ?>
-      <?= $render_ad('article_top', 'Advertisement') ?>
+  <?= $render_ad('article_top', hs_t('advertisement', 'Advertisement')) ?>
       <div class="article-inner">
         <nav class="breadcrumb">
           <a href="<?= hs_base_url('index.php') ?>">Home</a>
@@ -578,15 +585,15 @@ if (!empty($post['image_main'])) {
           <?php if (!empty($post['content'])): ?>
             <?= $post['content'] ?>
           <?php else: ?>
-            <p>No content.</p>
+            <p><?= htmlspecialchars(hs_t('no_content', 'No content.')) ?></p>
           <?php endif; ?>
         </div>
 
-        <?= $render_ad('article_inline', 'Advertisement') ?>
+        <?= $render_ad('article_inline', hs_t('advertisement', 'Advertisement')) ?>
 
         <?php if (!empty($tags)): ?>
           <div class="article-tags">
-            <strong>Tags:</strong>
+            <strong><?= htmlspecialchars(hs_t('tags_label', 'Tags:')) ?></strong>
             <?php foreach ($tags as $tag): ?>
             <a href="<?= hs_tag_url($tag['slug']) ?>"><?= htmlspecialchars($tag['name']) ?></a>
             <?php endforeach; ?>
@@ -594,7 +601,7 @@ if (!empty($post['image_main'])) {
         <?php endif; ?>
 
         <div class="share-block">
-          <div>Share this article</div>
+          <div><?= htmlspecialchars(hs_t('share_article', 'Share this article')) ?></div>
           <?php
             $shareUrl = urlencode($canonical);
             $shareText = urlencode($post['title'] . ' - ' . $site_title);
@@ -609,12 +616,12 @@ if (!empty($post['image_main'])) {
 
         <?php if (!empty($related)): ?>
           <div class="related-block">
-            <div class="related-title">Related articles</div>
+            <div class="related-title"><?= htmlspecialchars(hs_t('related_articles', 'Related articles')) ?></div>
             <div class="related-grid">
               <?php foreach ($related as $r): ?>
                 <article class="related-card">
                   <a href="<?= hs_news_url($r['slug']) ?>"><?= htmlspecialchars($r['title']) ?></a>
-                  <div class="related-meta">Published <?= hs_post_date_local($r) ?></div>
+                  <div class="related-meta"><?= htmlspecialchars(hs_t('published_on', 'Published {date}', ['date' => hs_post_date_local($r)])) ?></div>
                 </article>
               <?php endforeach; ?>
             </div>
@@ -625,28 +632,28 @@ if (!empty($post['image_main'])) {
           <div class="article-nav">
             <div style="flex:1;">
               <?php if ($prevPost): ?>
-                <a href="<?= hs_news_url($prevPost['slug']) ?>">← Previous: <?= htmlspecialchars($prevPost['title']) ?></a>
+                <a href="<?= hs_news_url($prevPost['slug']) ?>">← <?= htmlspecialchars(hs_t('previous_article', 'Previous')) ?>: <?= htmlspecialchars($prevPost['title']) ?></a>
               <?php endif; ?>
             </div>
             <div style="flex:1; text-align:right;">
               <?php if ($nextPost): ?>
-                <a href="<?= hs_news_url($nextPost['slug']) ?>">Next: <?= htmlspecialchars($nextPost['title']) ?> →</a>
+                <a href="<?= hs_news_url($nextPost['slug']) ?>"><?= htmlspecialchars(hs_t('next_article', 'Next')) ?>: <?= htmlspecialchars($nextPost['title']) ?> →</a>
               <?php endif; ?>
             </div>
           </div>
         <?php endif; ?>
 
         <div class="comment-block" aria-live="polite">
-          <div class="comment-title">Comments</div>
-          <div class="comment-note">Optional section — wire up your preferred provider or enable native comments.</div>
-          <textarea class="comment-field" placeholder="Share your thoughts (coming soon)..." disabled></textarea>
-          <div class="comment-action"><button type="button" disabled>Post Comment</button></div>
+          <div class="comment-title"><?= htmlspecialchars(hs_t('comments_title', 'Comments')) ?></div>
+          <div class="comment-note"><?= htmlspecialchars(hs_t('comments_note', 'Optional section — wire up your preferred provider or enable native comments.')) ?></div>
+          <textarea class="comment-field" placeholder="<?= htmlspecialchars(hs_t('comments_placeholder', 'Share your thoughts (coming soon)...')) ?>" disabled></textarea>
+          <div class="comment-action"><button type="button" disabled><?= htmlspecialchars(hs_t('comments_submit', 'Post Comment')) ?></button></div>
         </div>
       </div>
     </article>
 
     <aside class="sidebar">
-      <?= $render_ad('article_sidebar', 'Advertisement') ?>
+      <?= $render_ad('article_sidebar', hs_t('advertisement', 'Advertisement')) ?>
       <section class="sidebar-card">
         <div class="sidebar-title">Trending</div>
         <?php if (empty($trending)): ?>
@@ -673,11 +680,11 @@ if (!empty($post['image_main'])) {
   </div>
 </main>
 
-<?= $render_ad('global_footer', 'Advertisement') ?>
+<?= $render_ad('global_footer', hs_t('advertisement', 'Advertisement')) ?>
 
 <footer>
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
-  <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
+  <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. <?= htmlspecialchars(hs_t('footer_rights', 'All rights reserved.')) ?></div>
 </footer>
 <script>
   const navToggle = document.querySelector('.nav-toggle');
