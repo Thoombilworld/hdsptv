@@ -151,6 +151,88 @@
     }
     .nav-main a:hover { background:rgba(15,23,42,0.8); color:#FACC15; text-decoration:none; }
 
+    .nav-categories {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .nav-categories .chip {
+      background:rgba(30,41,59,0.9);
+      color:#E5E7EB;
+      border:1px solid rgba(148,163,184,0.5);
+      border-radius:12px;
+      padding:8px 12px;
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      box-shadow:0 8px 20px rgba(0,0,0,0.18);
+    }
+    .nav-categories .chip:hover { background:rgba(30,64,175,0.5); color:#FACC15; text-decoration:none; }
+
+    .category-ribbon {
+      width:100%;
+      background:#0B1120;
+      border-bottom:1px solid rgba(148,163,184,0.25);
+      box-shadow:0 18px 38px rgba(15,23,42,0.18);
+    }
+    .category-ribbon-inner {
+      width:min(1280px, 100% - 20px);
+      margin:0 auto;
+      padding:10px 12px 12px;
+    }
+    .category-ribbon-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+      color:#E2E8F0;
+    }
+    .category-ribbon-title {
+      font-size:12px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+    }
+    .category-ribbon-toggle {
+      background:#1E293B;
+      color:#E5E7EB;
+      border:1px solid rgba(148,163,184,0.45);
+      border-radius:10px;
+      padding:8px 12px;
+      font-size:12px;
+      cursor:pointer;
+    }
+
+    .category-drawer {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap:10px;
+      max-height:420px;
+      overflow:hidden;
+      transition:max-height .25s ease;
+    }
+    .category-drawer.is-collapsed { max-height:0; padding:0; margin:0; border:0; }
+    .category-pill {
+      background:#111827;
+      border:1px solid rgba(148,163,184,0.3);
+      border-radius:12px;
+      padding:10px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      color:#E5E7EB;
+      box-shadow:0 10px 22px rgba(15,23,42,0.25);
+    }
+    .category-pill h4 {
+      margin:0;
+      font-size:13px;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:#FACC15;
+    }
+    .category-pill small { color:#94A3B8; font-size:11px; }
+
     .nav-utilities {
       width:100%;
       display:grid;
@@ -822,6 +904,7 @@
       $slug = strtolower($cat['slug']);
       $category_blocks[$slug] = [
         'label' => $cat['name'],
+        'slug'  => $slug,
         'items' => $category_posts[$slug] ?? [],
       ];
     }
@@ -829,9 +912,15 @@
     foreach ($category_posts as $slug => $items) {
       $category_blocks[$slug] = [
         'label' => ucwords(str_replace('-', ' ', $slug)),
+        'slug'  => $slug,
         'items' => $items,
       ];
     }
+  }
+
+  $category_nav_cards = array_values($category_blocks);
+  if (count($category_nav_cards) > 18) {
+    $category_nav_cards = array_slice($category_nav_cards, 0, 18);
   }
 
   function hs_post_date($p) {
@@ -862,6 +951,14 @@
           <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars(hs_t('nav_' . $item['slug'], $item['label'])) ?></a>
         <?php endforeach; ?>
       </nav>
+      <?php if (!empty($category_nav_cards)): ?>
+        <div class="nav-categories" aria-label="Quick category chips">
+          <?php foreach (array_slice($category_nav_cards, 0, 6) as $chip): ?>
+            <?php $chipSlug = $chip['slug'] ?? strtolower($chip['label']); ?>
+            <a class="chip" href="<?= hs_category_url($chipSlug) ?>"><?= htmlspecialchars($chip['label']) ?></a>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
       <div class="nav-utilities stack-mobile">
         <form class="nav-search" action="<?= hs_search_url() ?>" method="get" data-testid="nav-search-form">
           <label class="sr-only" for="nav-search"><?= htmlspecialchars(hs_t('search_label', 'Search')) ?></label>
@@ -895,6 +992,33 @@
     </div>
   </div>
 </header>
+
+<div class="category-ribbon" aria-label="Category quick links">
+  <div class="category-ribbon-inner">
+    <div class="category-ribbon-head">
+      <div>
+        <div class="category-ribbon-title"><?= htmlspecialchars(hs_t('categories', 'Categories')) ?></div>
+        <div style="font-size:12px; color:#94A3B8;">Blocks pull directly from Admin → Categories so you can reorder and test quickly.</div>
+      </div>
+      <button class="category-ribbon-toggle" type="button" data-category-toggle>
+        <?= htmlspecialchars(hs_t('toggle_categories', 'Show / Hide')) ?>
+      </button>
+    </div>
+    <div class="category-drawer" data-category-drawer>
+      <?php if (empty($category_nav_cards)): ?>
+        <div style="color:#E2E8F0; font-size:12px;">No categories found. Add some from the Admin panel.</div>
+      <?php else: ?>
+        <?php foreach ($category_nav_cards as $block): ?>
+          <?php $navSlug = $block['slug'] ?? strtolower($block['label']); ?>
+          <a class="category-pill" href="<?= hs_category_url($navSlug) ?>">
+            <h4><?= htmlspecialchars($block['label']) ?></h4>
+            <small><?= !empty($block['items']) ? count($block['items']) . ' ' . htmlspecialchars(hs_t('posts', 'Posts')) : htmlspecialchars(hs_t('empty_category', 'Awaiting content')) ?></small>
+          </a>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
 
 <?php if ($topAd = $ad_for('homepage_top')): ?>
   <div class="ads-slot ads-top">
@@ -1343,6 +1467,17 @@
           intervalId = setInterval(() => setSlide((active + 1) % slides.length), 6000);
         }
       });
+    });
+  }
+
+  const categoryDrawer = document.querySelector('[data-category-drawer]');
+  const categoryToggle = document.querySelector('[data-category-toggle]');
+  if (categoryDrawer && categoryToggle) {
+    let collapsed = false;
+    categoryToggle.addEventListener('click', () => {
+      collapsed = !collapsed;
+      categoryDrawer.classList.toggle('is-collapsed', collapsed);
+      categoryToggle.innerText = collapsed ? '<?= addslashes(hs_t('show_categories', 'Show categories')) ?>' : '<?= addslashes(hs_t('hide_categories', 'Hide categories')) ?>';
     });
   }
 </script>
