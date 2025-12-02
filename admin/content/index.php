@@ -18,7 +18,8 @@ $role = $staff['role'] ?? 'admin';
     header { padding:12px 20px; border-bottom:1px solid #111827; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
     .logo { font-size:16px; font-weight:700; letter-spacing:.12em; }
     nav a { margin-right:10px; font-size:12px; color:#9CA3AF; }
-    nav a:hover { color:#FACC15; }
+    nav a:hover, nav a.active { color:#FACC15; }
+    nav a.highlight { color:#FACC15; font-weight:600; }
     .container { max-width:1040px; margin:18px auto; padding:0 16px 24px; }
     h1 { margin:0 0 6px; font-size:20px; }
     p.lead { margin:0 0 16px; font-size:13px; color:#E5E7EB; }
@@ -34,19 +35,7 @@ $role = $staff['role'] ?? 'admin';
 <header>
   <div class="logo">NEWS HDSPTV • <?= strtoupper($role) ?> CONTENT</div>
   <nav>
-    <a href="<?= hs_base_url('admin/index.php') ?>">Dashboard</a>
-    <a href="<?= hs_base_url('admin/content/index.php') ?>">Content</a>
-    <?php if (in_array($role, ['admin', 'editor'])): ?>
-      <a href="<?= hs_base_url('admin/homepage.php') ?>">Homepage</a>
-    <?php endif; ?>
-    <?php if ($role === 'admin'): ?>
-      <a href="<?= hs_base_url('admin/settings.php') ?>">Site Settings</a>
-      <a href="<?= hs_base_url('admin/seo.php') ?>">SEO</a>
-      <a href="<?= hs_base_url('admin/social.php') ?>">Social</a>
-      <a href="<?= hs_base_url('admin/ads.php') ?>">Ads</a>
-      <a href="<?= hs_base_url('admin/users.php') ?>">Staff</a>
-    <?php endif; ?>
-    <a href="<?= hs_base_url('admin/logout.php') ?>" style="color:#FACC15;">Logout</a>
+    <?php hs_render_admin_nav($role, 'content'); ?>
   </nav>
 </header>
 <main class="container">

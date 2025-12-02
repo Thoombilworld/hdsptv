@@ -3,32 +3,12 @@ require __DIR__ . '/../bootstrap.php';
 hs_require_staff(['admin', 'editor']);
 $db = hs_db();
 
-function hs_table_exists($db, $table)
-{
-    if (!$db) return false;
-    $res = mysqli_query($db, "SHOW TABLES LIKE '" . mysqli_real_escape_string($db, $table) . "'");
-    return $res && mysqli_num_rows($res) > 0;
-}
-
-function hs_table_has_columns($db, $table, array $columns)
-{
-    if (!$db) return false;
-    $escaped = "'" . implode("','", array_map(function ($col) use ($db) {
-        return mysqli_real_escape_string($db, $col);
-    }, $columns)) . "'";
-
-    $sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . mysqli_real_escape_string($db, $table) . "' AND COLUMN_NAME IN ($escaped)";
-    $res = mysqli_query($db, $sql);
-    if (!$res) return false;
-    $row = mysqli_fetch_row($res);
-    return $row && (int)$row[0] === count($columns);
-}
-
 $analytics_error = null;
-$analytics_ready = $db && hs_table_exists($db, 'hs_analytics_events');
+$role = hs_staff_role() ?? 'admin';
+$analytics_ready = $db && hs_table_exists('hs_analytics_events', $db);
 if (!$db) {
     $analytics_error = 'Database connection unavailable. Check HS_DB_* values in .env.php.';
-} elseif ($analytics_ready && !hs_table_has_columns($db, 'hs_analytics_events', ['event_type', 'post_id', 'category_id', 'reporter_id', 'editor_id', 'visitor_hash', 'country', 'device', 'browser', 'user_agent', 'created_at'])) {
+} elseif ($analytics_ready && !hs_table_has_columns('hs_analytics_events', ['event_type', 'post_id', 'category_id', 'reporter_id', 'editor_id', 'visitor_hash', 'country', 'device', 'browser', 'user_agent', 'created_at'], $db)) {
     $analytics_ready = false;
     $analytics_error = 'The hs_analytics_events table is missing required columns. Run the latest installer SQL to migrate the schema.';
 } elseif (!$analytics_ready) {
@@ -132,7 +112,8 @@ if ($analytics_ready) {
     body { margin:0; font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#020617; color:#E5E7EB; }
     header { padding:12px 20px; border-bottom:1px solid #111827; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
     nav a { margin-right:10px; font-size:12px; color:#9CA3AF; }
-    nav a:hover { color:#FACC15; }
+    nav a:hover, nav a.active { color:#FACC15; }
+    nav a.highlight { color:#FACC15; font-weight:600; }
     .container { max-width:1200px; margin:18px auto; padding:0 16px; }
     h1 { margin:0 0 8px; font-size:22px; letter-spacing:.02em; }
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin:14px 0; }
@@ -151,11 +132,7 @@ if ($analytics_ready) {
 <header>
   <div style="font-weight:700; letter-spacing:.14em;">NEWS HDSPTV • ANALYTICS</div>
   <nav>
-    <a href="<?= hs_base_url('admin/index.php') ?>">Dashboard</a>
-    <a href="<?= hs_base_url('admin/content/index.php') ?>">Content</a>
-    <a href="<?= hs_base_url('admin/ads.php') ?>">Ads</a>
-    <a href="<?= hs_base_url('admin/users.php') ?>">Staff</a>
-    <a href="<?= hs_base_url('admin/logout.php') ?>" style="color:#FACC15;">Logout</a>
+    <?php hs_render_admin_nav($role, 'analytics'); ?>
   </nav>
 </header>
 <main class="container">

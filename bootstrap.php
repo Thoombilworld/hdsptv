@@ -485,6 +485,49 @@ function hs_require_admin()
     hs_require_staff(['admin']);
 }
 
+function hs_admin_nav_links($role, $active = '')
+{
+    $links = [
+        ['key' => 'dashboard', 'label' => 'Dashboard', 'href' => hs_base_url('admin/index.php'), 'roles' => ['admin', 'editor', 'reporter']],
+        ['key' => 'content',   'label' => 'Content',   'href' => hs_base_url('admin/content/index.php'), 'roles' => ['admin', 'editor', 'reporter']],
+        ['key' => 'homepage',  'label' => 'Homepage',  'href' => hs_base_url('admin/homepage.php'), 'roles' => ['admin', 'editor']],
+        ['key' => 'settings',  'label' => 'Site Settings', 'href' => hs_base_url('admin/settings.php'), 'roles' => ['admin']],
+        ['key' => 'legal',     'label' => 'Legal',     'href' => hs_base_url('admin/legal.php'), 'roles' => ['admin']],
+        ['key' => 'seo',       'label' => 'SEO',       'href' => hs_base_url('admin/seo.php'), 'roles' => ['admin']],
+        ['key' => 'social',    'label' => 'Social',    'href' => hs_base_url('admin/social.php'), 'roles' => ['admin']],
+        ['key' => 'ads',       'label' => 'Ads',       'href' => hs_base_url('admin/ads.php'), 'roles' => ['admin']],
+        ['key' => 'analytics', 'label' => 'Analytics', 'href' => hs_base_url('admin/analytics.php'), 'roles' => ['admin', 'editor']],
+        ['key' => 'users',     'label' => 'Staff',     'href' => hs_base_url('admin/users.php'), 'roles' => ['admin']],
+        ['key' => 'logs',      'label' => 'Logs',      'href' => hs_base_url('admin/logs.php'), 'roles' => ['admin']],
+        ['key' => 'system',    'label' => 'System Health', 'href' => hs_base_url('admin/system.php'), 'roles' => ['admin']],
+        ['key' => 'logout',    'label' => 'Logout',    'href' => hs_base_url('admin/logout.php'), 'roles' => ['admin', 'editor', 'reporter'], 'highlight' => true],
+    ];
+
+    $role = $role ?: 'admin';
+
+    return array_values(array_map(function ($link) use ($active) {
+        $link['active'] = $link['key'] === $active;
+        return $link;
+    }, array_filter($links, function ($link) use ($role) {
+        return in_array($role, $link['roles'], true);
+    })));
+}
+
+function hs_render_admin_nav($role, $active = '')
+{
+    foreach (hs_admin_nav_links($role, $active) as $link) {
+        $classes = [];
+        if (!empty($link['active'])) {
+            $classes[] = 'active';
+        }
+        if (!empty($link['highlight'])) {
+            $classes[] = 'highlight';
+        }
+
+        echo '<a href="' . $link['href'] . '"' . ($classes ? ' class="' . implode(' ', $classes) . '"' : '') . '>' . htmlspecialchars($link['label']) . '</a>';
+    }
+}
+
 // Frontend user helpers
 function hs_current_user() {
     if (empty($_SESSION['hs_user_id'])) return null;
@@ -513,4 +556,128 @@ function hs_footer_links_html()
     }
 
     return implode(' · ', $parts);
+}
+
+function hs_table_exists($table, $db = null)
+{
+    $db = $db ?: hs_db();
+    if (!$db) return false;
+
+    $table = mysqli_real_escape_string($db, $table);
+    $res = mysqli_query($db, "SHOW TABLES LIKE '" . $table . "'");
+    return $res && mysqli_num_rows($res) > 0;
+}
+
+function hs_table_has_columns($table, array $columns, $db = null)
+{
+    $db = $db ?: hs_db();
+    if (!$db) return false;
+
+    $escaped = "'" . implode("','", array_map(function ($col) use ($db) {
+        return mysqli_real_escape_string($db, $col);
+    }, $columns)) . "'";
+
+    $sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . mysqli_real_escape_string($db, $table) . "' AND COLUMN_NAME IN ($escaped)";
+    $res = mysqli_query($db, $sql);
+    if (!$res) return false;
+    $row = mysqli_fetch_row($res);
+    return $row && (int)$row[0] === count($columns);
+}
+
+function hs_system_checks()
+{
+    $checks = [];
+    $db = hs_db();
+    global $HS_DB_NAME, $HS_DB_HOST;
+
+    $checks[] = [
+        'label' => 'Installer configuration',
+        'status' => HS_INSTALLED ? 'ok' : 'fail',
+        'detail' => HS_INSTALLED ? '.env.php loaded from installer.' : 'Installer has not generated .env.php yet.',
+    ];
+
+    if ($db) {
+        $checks[] = [
+            'label' => 'Database connection',
+            'status' => 'ok',
+            'detail' => 'Connected to ' . htmlspecialchars($HS_DB_HOST ?? 'localhost') . ' / ' . htmlspecialchars($HS_DB_NAME ?? 'news_hdsptv'),
+        ];
+    } else {
+        $checks[] = [
+            'label' => 'Database connection',
+            'status' => 'fail',
+            'detail' => 'Database connection unavailable. Confirm HS_DB_* values in .env.php.',
+        ];
+    }
+
+    if ($db) {
+        $coreTables = ['hs_settings', 'hs_categories', 'hs_posts', 'hs_tags', 'hs_users', 'hs_ads'];
+        $missing = [];
+        foreach ($coreTables as $table) {
+            if (!hs_table_exists($table, $db)) {
+                $missing[] = $table;
+            }
+        }
+        $checks[] = [
+            'label' => 'Core tables',
+            'status' => empty($missing) ? 'ok' : 'fail',
+            'detail' => empty($missing) ? 'All core tables are available.' : ('Missing: ' . implode(', ', $missing)),
+        ];
+
+        if (hs_table_exists('hs_analytics_events', $db)) {
+            $needsMigration = !hs_table_has_columns('hs_analytics_events', ['event_type', 'post_id', 'category_id', 'reporter_id', 'editor_id', 'visitor_hash', 'country', 'device', 'browser', 'user_agent', 'created_at'], $db);
+            $checks[] = [
+                'label' => 'Analytics schema',
+                'status' => $needsMigration ? 'warn' : 'ok',
+                'detail' => $needsMigration ? 'Analytics table found but missing columns; run latest installer SQL.' : 'Analytics tracking columns detected.',
+            ];
+        } else {
+            $checks[] = [
+                'label' => 'Analytics schema',
+                'status' => 'warn',
+                'detail' => 'Analytics table not found; install or migrate hs_analytics_events for tracking.',
+            ];
+        }
+    }
+
+    $requiredDirs = [
+        __DIR__ . '/writable' => 'Writable directory',
+        __DIR__ . '/writable/logs' => 'Logs directory',
+        __DIR__ . '/writable/uploads' => 'Uploads directory',
+    ];
+
+    foreach ($requiredDirs as $dir => $label) {
+        $exists = is_dir($dir);
+        $writable = $exists && is_writable($dir);
+        $checks[] = [
+            'label' => $label,
+            'status' => ($exists && $writable) ? 'ok' : 'fail',
+            'detail' => $exists ? ($writable ? 'Ready' : 'Directory is not writable: ' . $dir) : 'Directory missing: ' . $dir,
+        ];
+    }
+
+    $extensions = ['mysqli', 'json', 'mbstring'];
+    $missingExtensions = array_filter($extensions, function ($ext) {
+        return !extension_loaded($ext);
+    });
+    $checks[] = [
+        'label' => 'PHP extensions',
+        'status' => empty($missingExtensions) ? 'ok' : 'fail',
+        'detail' => empty($missingExtensions) ? 'mysqli, json, mbstring loaded.' : ('Missing: ' . implode(', ', $missingExtensions)),
+    ];
+
+    $htaccessPath = __DIR__ . '/.htaccess';
+    $checks[] = [
+        'label' => 'Clean URLs (.htaccess)',
+        'status' => file_exists($htaccessPath) ? 'ok' : 'warn',
+        'detail' => file_exists($htaccessPath) ? '.htaccess present for rewrite rules.' : '.htaccess not found; clean URLs may fail.',
+    ];
+
+    $checks[] = [
+        'label' => 'PHP version',
+        'status' => version_compare(PHP_VERSION, '7.4', '>=') ? 'ok' : 'warn',
+        'detail' => 'Running PHP ' . PHP_VERSION . ' (7.4+ recommended).',
+    ];
+
+    return $checks;
 }

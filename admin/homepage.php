@@ -4,6 +4,7 @@ hs_require_staff(['admin', 'editor']);
 
 $db = hs_db();
 $settings = hs_settings();
+$role = hs_staff_role() ?? 'admin';
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -46,7 +47,8 @@ $role = $staff['role'] ?? 'admin';
     header { padding:12px 20px; border-bottom:1px solid #1E293B; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
     .logo { font-size:16px; font-weight:700; letter-spacing:.14em; }
     nav a { margin-right:10px; font-size:12px; color:#94A3B8; }
-    nav a:hover { color:#FACC15; }
+    nav a:hover, nav a.active { color:#FACC15; }
+    nav a.highlight { color:#FACC15; font-weight:600; }
     .container { max-width:960px; margin:18px auto; padding:0 16px; }
     .card { background:linear-gradient(145deg, rgba(30,41,59,0.8), rgba(15,23,42,0.95)); border:1px solid rgba(148,163,184,0.12); border-radius:16px; padding:18px 20px; box-shadow:0 25px 80px rgba(0,0,0,0.35); }
     .pill { font-size:11px; text-transform:uppercase; letter-spacing:.2em; color:#FACC15; margin-bottom:8px; display:inline-block; }
@@ -66,15 +68,7 @@ $role = $staff['role'] ?? 'admin';
 <header>
   <div class="logo">NEWS HDSPTV • <?= strtoupper($role) ?></div>
   <nav>
-    <a href="<?= hs_base_url('admin/index.php') ?>">Dashboard</a>
-    <a href="<?= hs_base_url('admin/content/index.php') ?>">Content</a>
-    <a href="<?= hs_base_url('admin/homepage.php') ?>" style="color:#FACC15;">Homepage</a>
-    <?php if ($role === 'admin'): ?>
-      <a href="<?= hs_base_url('admin/ads.php') ?>">Ads</a>
-      <a href="<?= hs_base_url('admin/settings.php') ?>">Settings</a>
-      <a href="<?= hs_base_url('admin/analytics.php') ?>">Analytics</a>
-    <?php endif; ?>
-    <a href="<?= hs_base_url('admin/logout.php') ?>" style="color:#FACC15;">Logout</a>
+    <?php hs_render_admin_nav($role, 'homepage'); ?>
   </nav>
 </header>
 
