@@ -1,74 +1,108 @@
 <?php
 require __DIR__ . '/../bootstrap.php';
-hs_require_staff(['admin']);
+hs_require_staff(['admin', 'editor']);
 $db = hs_db();
 
 function hs_table_exists($db, $table)
 {
+    if (!$db) return false;
     $res = mysqli_query($db, "SHOW TABLES LIKE '" . mysqli_real_escape_string($db, $table) . "'");
     return $res && mysqli_num_rows($res) > 0;
 }
 
-$analytics_ready = hs_table_exists($db, 'hs_analytics_events');
+function hs_table_has_columns($db, $table, array $columns)
+{
+    if (!$db) return false;
+    $escaped = "'" . implode("','", array_map(function ($col) use ($db) {
+        return mysqli_real_escape_string($db, $col);
+    }, $columns)) . "'";
 
-$total_visitors = $daily = $article_reads = $article_report = $category_report = [];
+    $sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . mysqli_real_escape_string($db, $table) . "' AND COLUMN_NAME IN ($escaped)";
+    $res = mysqli_query($db, $sql);
+    if (!$res) return false;
+    $row = mysqli_fetch_row($res);
+    return $row && (int)$row[0] === count($columns);
+}
+
+$analytics_error = null;
+$analytics_ready = $db && hs_table_exists($db, 'hs_analytics_events');
+if (!$db) {
+    $analytics_error = 'Database connection unavailable. Check HS_DB_* values in .env.php.';
+} elseif ($analytics_ready && !hs_table_has_columns($db, 'hs_analytics_events', ['event_type', 'post_id', 'category_id', 'reporter_id', 'editor_id', 'visitor_hash', 'country', 'device', 'browser', 'user_agent', 'created_at'])) {
+    $analytics_ready = false;
+    $analytics_error = 'The hs_analytics_events table is missing required columns. Run the latest installer SQL to migrate the schema.';
+} elseif (!$analytics_ready) {
+    $analytics_error = 'The analytics table was not found. Install or migrate hs_analytics_events to enable tracking reports.';
+}
+
+$total_visitors = 0;
+$page_views = 0;
+$last_day_views = 0;
+$article_reads = 0;
+$daily = $article_report = $category_report = [];
 $country_report = $device_report = $browser_report = $reporter_report = $editor_report = [];
 $active_readers = 0;
 
+function hs_fetch_all_or_empty($db, $sql)
+{
+    $res = mysqli_query($db, $sql);
+    return $res ? mysqli_fetch_all($res, MYSQLI_ASSOC) : [];
+}
+
 if ($analytics_ready) {
+    $row = mysqli_fetch_row(mysqli_query($db, "SELECT COUNT(*) FROM hs_analytics_events"));
+    $page_views = $row ? (int)$row[0] : 0;
+
     $row = mysqli_fetch_row(mysqli_query($db, "SELECT COUNT(DISTINCT visitor_hash) FROM hs_analytics_events"));
     $total_visitors = $row ? (int)$row[0] : 0;
 
     $row = mysqli_fetch_row(mysqli_query($db, "SELECT COUNT(*) FROM hs_analytics_events WHERE event_type='post'"));
     $article_reads = $row ? (int)$row[0] : 0;
 
+    $row = mysqli_fetch_row(mysqli_query($db, "SELECT COUNT(*) FROM hs_analytics_events WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 DAY)"));
+    $last_day_views = $row ? (int)$row[0] : 0;
+
     $active_row = mysqli_fetch_row(mysqli_query($db, "SELECT COUNT(*) FROM hs_analytics_events WHERE created_at >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)"));
     $active_readers = $active_row ? (int)$active_row[0] : 0;
 
-    $daily_res = mysqli_query($db, "SELECT DATE(created_at) as day, COUNT(*) as views, COUNT(DISTINCT visitor_hash) as visitors
+    $daily = hs_fetch_all_or_empty($db, "SELECT DATE(created_at) as day, COUNT(*) as views, COUNT(DISTINCT visitor_hash) as visitors
                                    FROM hs_analytics_events
                                    GROUP BY DATE(created_at)
                                    ORDER BY day DESC
                                    LIMIT 10");
-    if ($daily_res) $daily = mysqli_fetch_all($daily_res, MYSQLI_ASSOC);
 
-    $article_res = mysqli_query($db, "SELECT p.title, p.slug, COUNT(e.id) as reads
+    $article_report = hs_fetch_all_or_empty($db, "SELECT p.title, p.slug, COUNT(e.id) as reads
                                       FROM hs_analytics_events e
                                       JOIN hs_posts p ON p.id = e.post_id
                                       WHERE e.event_type='post'
                                       GROUP BY e.post_id
                                       ORDER BY reads DESC
                                       LIMIT 10");
-    if ($article_res) $article_report = mysqli_fetch_all($article_res, MYSQLI_ASSOC);
 
-    $category_res = mysqli_query($db, "SELECT c.name, COUNT(e.id) as reads
+    $category_report = hs_fetch_all_or_empty($db, "SELECT c.name, COUNT(e.id) as reads
                                        FROM hs_analytics_events e
                                        JOIN hs_categories c ON c.id = e.category_id
                                        GROUP BY e.category_id
                                        ORDER BY reads DESC
                                        LIMIT 10");
-    if ($category_res) $category_report = mysqli_fetch_all($category_res, MYSQLI_ASSOC);
 
-    $country_res = mysqli_query($db, "SELECT COALESCE(country,'Unknown') as country, COUNT(*) as hits
+    $country_report = hs_fetch_all_or_empty($db, "SELECT COALESCE(country,'Unknown') as country, COUNT(*) as hits
                                       FROM hs_analytics_events
                                       GROUP BY country
                                       ORDER BY hits DESC
                                       LIMIT 10");
-    if ($country_res) $country_report = mysqli_fetch_all($country_res, MYSQLI_ASSOC);
 
-    $device_res = mysqli_query($db, "SELECT COALESCE(device,'Unknown') as device, COUNT(*) as hits
+    $device_report = hs_fetch_all_or_empty($db, "SELECT COALESCE(device,'Unknown') as device, COUNT(*) as hits
                                      FROM hs_analytics_events
                                      GROUP BY device
                                      ORDER BY hits DESC");
-    if ($device_res) $device_report = mysqli_fetch_all($device_res, MYSQLI_ASSOC);
 
-    $browser_res = mysqli_query($db, "SELECT COALESCE(browser,'Unknown') as browser, COUNT(*) as hits
+    $browser_report = hs_fetch_all_or_empty($db, "SELECT COALESCE(browser,'Unknown') as browser, COUNT(*) as hits
                                       FROM hs_analytics_events
                                       GROUP BY browser
                                       ORDER BY hits DESC");
-    if ($browser_res) $browser_report = mysqli_fetch_all($browser_res, MYSQLI_ASSOC);
 
-    $reporter_res = mysqli_query($db, "SELECT u.name, COUNT(e.id) as reads
+    $reporter_report = hs_fetch_all_or_empty($db, "SELECT u.name, COUNT(e.id) as reads
                                         FROM hs_analytics_events e
                                         JOIN hs_posts p ON p.id = e.post_id
                                         JOIN hs_users u ON u.id = p.reporter_id
@@ -76,9 +110,8 @@ if ($analytics_ready) {
                                         GROUP BY p.reporter_id
                                         ORDER BY reads DESC
                                         LIMIT 10");
-    if ($reporter_res) $reporter_report = mysqli_fetch_all($reporter_res, MYSQLI_ASSOC);
 
-    $editor_res = mysqli_query($db, "SELECT u.name, COUNT(e.id) as reads
+    $editor_report = hs_fetch_all_or_empty($db, "SELECT u.name, COUNT(e.id) as reads
                                      FROM hs_analytics_events e
                                      JOIN hs_posts p ON p.id = e.post_id
                                      JOIN hs_users u ON u.id = p.editor_id
@@ -86,7 +119,6 @@ if ($analytics_ready) {
                                      GROUP BY p.editor_id
                                      ORDER BY reads DESC
                                      LIMIT 10");
-    if ($editor_res) $editor_report = mysqli_fetch_all($editor_res, MYSQLI_ASSOC);
 }
 ?>
 <!doctype html>
@@ -128,12 +160,17 @@ if ($analytics_ready) {
 </header>
 <main class="container">
   <h1>Analytics Dashboard</h1>
-  <p class="muted">Total visitors, daily views, article reads, and staff performance reports.</p>
+  <p class="muted">Track visitors, reads, devices, countries, and staff performance across your newsroom.</p>
 
   <?php if (!$analytics_ready): ?>
-    <div class="card">
-      <h3>Analytics table missing</h3>
-      <p class="muted">Install or migrate the <code>hs_analytics_events</code> table to start collecting stats.</p>
+    <div class="card" style="border:1px solid rgba(248,113,113,0.3); background:linear-gradient(135deg,#1f2937,#0f172a);">
+      <h3 style="color:#fecdd3; margin-top:0;">Analytics unavailable</h3>
+      <p class="muted" style="margin-bottom:6px;"><?= htmlspecialchars($analytics_error ?? 'Analytics storage is missing.') ?></p>
+      <ul class="muted" style="margin:0 0 6px 16px; padding:0;">
+        <li>Confirm database connectivity in <code>.env.php</code>.</li>
+        <li>Apply the latest <code>install/install.sql</code> to create/upgrade <code>hs_analytics_events</code>.</li>
+        <li>Reload this page after migrating.</li>
+      </ul>
     </div>
   <?php else: ?>
     <div class="grid">
@@ -143,9 +180,19 @@ if ($analytics_ready) {
         <p class="muted">Total unique visitors tracked.</p>
       </div>
       <div class="card">
+        <div class="pill">Page Views</div>
+        <h3><?= number_format($page_views) ?></h3>
+        <p class="muted">All recorded analytics events.</p>
+      </div>
+      <div class="card">
         <div class="pill">Article Reads</div>
         <h3><?= number_format($article_reads) ?></h3>
         <p class="muted">Total article view events.</p>
+      </div>
+      <div class="card">
+        <div class="pill">Last 24h</div>
+        <h3><?= number_format($last_day_views) ?></h3>
+        <p class="muted">Events captured in the past day.</p>
       </div>
       <div class="card">
         <div class="pill">Active Now</div>
