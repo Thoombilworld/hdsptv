@@ -2,6 +2,13 @@
 session_start();
 require __DIR__ . '/config/config.php';
 
+if (!defined('HS_INSTALLED') || !HS_INSTALLED) {
+    http_response_code(503);
+    echo "<h2 style=\"font-family:system-ui,sans-serif; text-align:center; margin-top:32px;\">Application not installed</h2>";
+    echo "<p style=\"font-family:system-ui,sans-serif; text-align:center;\">Please create .env.php via the installer before accessing admin pages.</p>";
+    exit;
+}
+
 function hs_base_url($path = '') {
     return HS_BASE_URL . ltrim($path, '/');
 }
