@@ -5,6 +5,7 @@
   $ad_for = function ($slot) use ($ads) {
       return $ads[$slot] ?? null;
   };
+  $layout = $layout ?? hs_home_layout($settings ?? []);
 
   $languageCode = hs_current_language_code();
   $languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
@@ -1020,13 +1021,13 @@
   </div>
 </div>
 
-<?php if ($topAd = $ad_for('homepage_top')): ?>
+<?php if ($layout['ads_top'] && ($topAd = $ad_for('homepage_top'))): ?>
   <div class="ads-slot ads-top">
     <?= hs_render_ad($topAd) ?>
   </div>
 <?php endif; ?>
 
-<?php if (!empty($breaking)): ?>
+<?php if ($layout['breaking'] && !empty($breaking)): ?>
   <div class="ticker">
     <div class="ticker-label"><?= htmlspecialchars(hs_t('breaking_title', 'Breaking')) ?></div>
     <div class="ticker-items">
@@ -1040,6 +1041,7 @@
 <main class="page">
   <div class="layout-main">
     <section class="column">
+      <?php if ($layout['featured']): ?>
       <div class="card">
         <div class="section-shell">
           <div class="pill"><span class="pill-dot"></span> <?= htmlspecialchars(hs_t('featured_slider', 'Top Featured Slider')) ?></div>
@@ -1110,8 +1112,9 @@
           <p style="font-size:12px; color:#475569;">No stories yet. Add posts from Admin → Content Manager.</p>
         <?php endif; ?>
       </div>
+      <?php endif; ?>
 
-      <?php if ($inlineAd = $ad_for('homepage_inline')): ?>
+      <?php if ($layout['ads_inline'] && ($inlineAd = $ad_for('homepage_inline'))): ?>
         <div class="ads-slot ads-inline">
           <?= hs_render_ad($inlineAd) ?>
         </div>
@@ -1324,12 +1327,14 @@
     </section>
 
     <aside class="column">
-      <?php if ($rightAd = $ad_for('homepage_right')): ?>
+      <?php $rightAd = $layout['ads_sidebar'] ? $ad_for('homepage_right') : null; ?>
+      <?php if ($layout['ads_sidebar'] && $rightAd): ?>
         <div class="ads-slot ads-inline">
           <?= hs_render_ad($rightAd) ?>
         </div>
       <?php endif; ?>
 
+      <?php if ($layout['trending']): ?>
       <section class="card side-card">
         <div class="pill"><span class="pill-dot"></span> Trending</div>
         <?php if (empty($trending)): ?>
@@ -1353,7 +1358,9 @@
           </ul>
         <?php endif; ?>
       </section>
+      <?php endif; ?>
 
+      <?php if ($layout['video']): ?>
       <section class="card side-card">
         <div class="pill"><span class="pill-dot"></span> Video</div>
         <div class="section-title" style="margin-bottom:4px;">Video News</div>
@@ -1373,7 +1380,9 @@
           </ul>
         <?php endif; ?>
       </section>
+      <?php endif; ?>
 
+      <?php if ($layout['gallery']): ?>
       <section class="card side-card">
         <div class="pill"><span class="pill-dot"></span> Gallery</div>
         <div class="section-title" style="margin-bottom:4px;">Photo Gallery</div>
@@ -1393,6 +1402,7 @@
           </ul>
         <?php endif; ?>
       </section>
+      <?php endif; ?>
 
       <section class="card side-card">
         <div class="section-title">Follow NEWS HDSPTV</div>
@@ -1418,6 +1428,7 @@
         </p>
       </section>
 
+      <?php if ($layout['ads_sidebar'] && !$rightAd): ?>
       <section class="card side-card">
         <div class="section-title">Homepage Sidebar Ad</div>
         <div class="ads-slot">
@@ -1425,6 +1436,7 @@
           (Manage this from Admin → Ads)
         </div>
       </section>
+      <?php endif; ?>
     </aside>
   </div>
 </main>

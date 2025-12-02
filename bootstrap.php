@@ -245,6 +245,15 @@ function hs_settings($force_reload = false)
         'theme'      => 'dark',
         'favicon'    => hs_base_url('assets/images/favicon.png'),
         'default_language' => 'en',
+        // Homepage layout defaults
+        'hp_show_breaking' => '1',
+        'hp_show_featured' => '1',
+        'hp_show_trending' => '1',
+        'hp_show_video' => '1',
+        'hp_show_gallery' => '1',
+        'hp_show_ads_top' => '1',
+        'hp_show_ads_inline' => '1',
+        'hp_show_ads_sidebar' => '1',
     ];
 
     if (defined('HS_INSTALLED') && HS_INSTALLED) {
@@ -257,6 +266,27 @@ function hs_settings($force_reload = false)
     }
 
     return $settings;
+}
+
+function hs_home_layout(array $settings)
+{
+    $flag = function ($key, $default = true) use ($settings) {
+        if (!array_key_exists($key, $settings)) {
+            return $default;
+        }
+        return $settings[$key] === '1';
+    };
+
+    return [
+        'breaking'   => $flag('hp_show_breaking'),
+        'featured'   => $flag('hp_show_featured'),
+        'trending'   => $flag('hp_show_trending'),
+        'video'      => $flag('hp_show_video'),
+        'gallery'    => $flag('hp_show_gallery'),
+        'ads_top'    => $flag('hp_show_ads_top'),
+        'ads_inline' => $flag('hp_show_ads_inline'),
+        'ads_sidebar'=> $flag('hp_show_ads_sidebar'),
+    ];
 }
 
 function hs_ad_slots()
