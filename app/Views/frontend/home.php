@@ -7,6 +7,15 @@
   };
   $layout = $layout ?? hs_home_layout($settings ?? []);
 
+  $settings     = $settings     ?? [];
+  $posts        = $posts        ?? [];
+  $featured     = $featured     ?? [];
+  $breaking     = $breaking     ?? [];
+  $trending     = $trending     ?? [];
+  $videos       = $videos       ?? [];
+  $galleries    = $galleries    ?? [];
+  $all_categories = $all_categories ?? [];
+
   $languageCode = hs_current_language_code();
   $languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
 
