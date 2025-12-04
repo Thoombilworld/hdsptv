@@ -1,0 +1,82 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# Clean article URL: /news/slug
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^news/([^/]+)/?$ post.php?slug=$1 [L,QSA]
+
+# Category page: /category/slug or /c/slug
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^category/([^/]+)/?$ category.php?slug=$1 [L,QSA]
+RewriteRule ^c/([^/]+)/?$ category.php?slug=$1 [L,QSA]
+
+# Tag page: /tag/slug
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^tag/([^/]+)/?$ tag.php?slug=$1 [L,QSA]
+
+# Search page: /search?q=...
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^search/?$ search.php [L,QSA]
+
+# Auth routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^login/?$ auth/login.php [L,QSA]
+RewriteRule ^register/?$ auth/register.php [L,QSA]
+RewriteRule ^forgot-password/?$ auth/forgot.php [L,QSA]
+RewriteRule ^reset-password/?$ auth/reset.php [L,QSA]
+
+# User dashboard
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^dashboard/?$ user/dashboard.php [L,QSA]
+RewriteRule ^account/?$ user/dashboard.php [L,QSA]
+
+# Static pages
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^terms/?$ terms.php [L,QSA]
+RewriteRule ^privacy/?$ privacy.php [L,QSA]
+RewriteRule ^contact/?$ contact.php [L,QSA]
+
+</IfModule>
+
+Options -Indexes
+
+# Performance: leverage gzip compression and client caching for static assets
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json application/xml application/rss+xml
+  <IfModule mod_headers.c>
+    Header append Vary Accept-Encoding
+  </IfModule>
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # Cache static assets aggressively; change asset filenames to bust cache on deploy
+  ExpiresByType text/css "access plus 30 days"
+  ExpiresByType application/javascript "access plus 30 days"
+  ExpiresByType application/x-javascript "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/gif "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType font/woff2 "access plus 30 days"
+  ExpiresByType font/woff "access plus 30 days"
+  ExpiresByType application/font-woff "access plus 30 days"
+  ExpiresByType application/font-woff2 "access plus 30 days"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|png|jpe?g|gif|webp|svg|ico|woff2?|ttf|otf)$">
+    Header set Cache-Control "max-age=2592000, public"
+  </FilesMatch>
+</IfModule>
