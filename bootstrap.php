@@ -656,6 +656,30 @@ function hs_system_checks()
         ];
     }
 
+    $requiredFiles = [
+        __DIR__ . '/config/config.php' => 'config/config.php',
+        __DIR__ . '/bootstrap.php' => 'bootstrap.php',
+        __DIR__ . '/app/Views/frontend/home.php' => 'app/Views/frontend/home.php',
+        __DIR__ . '/assets/css/style.css' => 'assets/css/style.css',
+        __DIR__ . '/install/install.sql' => 'install/install.sql',
+        __DIR__ . '/lang/en.php' => 'lang/en.php',
+        __DIR__ . '/lang/ar.php' => 'lang/ar.php',
+        __DIR__ . '/lang/ml.php' => 'lang/ml.php',
+    ];
+
+    $missingFiles = [];
+    foreach ($requiredFiles as $path => $label) {
+        if (!file_exists($path)) {
+            $missingFiles[] = $label;
+        }
+    }
+
+    $checks[] = [
+        'label' => 'Required files',
+        'status' => empty($missingFiles) ? 'ok' : 'fail',
+        'detail' => empty($missingFiles) ? 'Key application files present.' : ('Missing: ' . implode(', ', $missingFiles)),
+    ];
+
     $extensions = ['mysqli', 'json', 'mbstring'];
     $missingExtensions = array_filter($extensions, function ($ext) {
         return !extension_loaded($ext);
