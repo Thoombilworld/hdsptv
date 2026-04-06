@@ -301,8 +301,9 @@
     .layout-main {
       display:grid;
       grid-template-columns: minmax(0,3.2fr) minmax(0,2fr);
-      gap:14px;
-      padding:12px 0 28px;
+      gap:16px;
+      padding:14px 0 30px;
+      align-items:start;
     }
 
     @media (max-width:1080px) {
@@ -321,7 +322,7 @@
       box-shadow:0 16px 40px rgba(15,23,42,0.10);
       border:1px solid rgba(15,23,42,0.08);
       padding:14px 16px;
-      margin-bottom:14px;
+      margin-bottom:16px;
     }
 
     .pill {
@@ -635,8 +636,8 @@
     .region-row {
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap:12px;
-      margin-top:10px;
+      gap:14px;
+      margin-top:12px;
     }
     .region-block {
       padding:10px 11px;
@@ -771,8 +772,8 @@
     .category-grid {
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap:12px;
-      margin-top:10px;
+      gap:14px;
+      margin-top:12px;
     }
     .category-card {
       background:#FFFFFF;
@@ -1403,6 +1404,9 @@
                 <?php endforeach; ?>
               </ul>
             <?php endif; ?>
+          </div>
+        </div>
+      </div>
 
     <section class="card">
       <div class="section-shell">
@@ -1458,8 +1462,6 @@
           <?php endforeach; ?>
         <?php endif; ?>
       </div>
-    </section>
-
     </section>
 
     <aside class="column">
