@@ -674,10 +674,13 @@ function hs_system_checks()
         }
     }
 
+    $verifiedCount = count($requiredFiles) - count($missingFiles);
     $checks[] = [
         'label' => 'Required files',
         'status' => empty($missingFiles) ? 'ok' : 'fail',
-        'detail' => empty($missingFiles) ? 'Key application files present.' : ('Missing: ' . implode(', ', $missingFiles)),
+        'detail' => empty($missingFiles)
+            ? ('Key critical files are present (' . $verifiedCount . '/' . count($requiredFiles) . ').')
+            : ('Critical file check: ' . $verifiedCount . '/' . count($requiredFiles) . ' present. Missing: ' . implode(', ', $missingFiles)),
     ];
 
     $extensions = ['mysqli', 'json', 'mbstring'];
