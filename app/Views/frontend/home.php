@@ -67,6 +67,7 @@
       background: #F5F7FB;
       color: var(--hs-text);
     }
+    *, *::before, *::after { box-sizing:border-box; }
 
     a { color: var(--hs-accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -791,7 +792,9 @@
       margin:18px 0 8px;
       display:flex;
       align-items:center;
+      justify-content:space-between;
       gap:10px;
+      flex-wrap:wrap;
     }
     .section-shell h2 {
       margin:0;
