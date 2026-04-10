@@ -87,14 +87,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <style>
     body { margin:0; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; background:#F6F7FB; color:#111; }
     .login-wrap { min-height:100vh; display:grid; place-items:center; padding:24px 14px; }
-    .login-card { width:min(460px,100%); background:#fff; border:1px solid #E5E7EB; border-radius:16px; padding:20px; box-shadow:0 20px 45px rgba(17,17,17,.08); }
+    .login-frame { width:min(1120px,100%); display:grid; grid-template-columns:minmax(0,1fr) minmax(420px,460px); gap:32px; align-items:center; }
+    .login-side { padding:24px; }
+    .login-side h2 { margin:0 0 10px; font-size:38px; line-height:1.1; color:#0B1220; }
+    .login-side p { margin:0; font-size:15px; color:#6B7280; max-width:42ch; }
+    .login-card { width:100%; background:#fff; border:1px solid #E5E7EB; border-radius:20px; padding:32px; box-shadow:0 20px 45px rgba(17,17,17,.08); }
     .brand { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
     .brand-dot { width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,#D60000,#8B0000); color:#fff; display:grid; place-items:center; font-weight:800; }
     h1 { margin:0 0 6px; font-size:24px; }
     .subtitle { margin:0 0 14px; color:#6B7280; font-size:13px; line-height:1.4; }
     .error { background:rgba(214,0,0,.09); border:1px solid rgba(214,0,0,.25); color:#B91C1C; border-radius:10px; padding:10px; font-size:13px; margin:0 0 12px; }
     label { display:block; margin:0 0 6px; font-size:13px; font-weight:600; }
-    input[type="email"], input[type="password"] { width:100%; box-sizing:border-box; border:1px solid #E5E7EB; border-radius:10px; padding:11px 12px; font-size:14px; margin:0 0 12px; }
+    input[type="email"], input[type="password"] { width:100%; box-sizing:border-box; border:1px solid #E5E7EB; border-radius:10px; padding:14px 12px; min-height:48px; font-size:14px; margin:0 0 16px; }
     input:focus { outline:2px solid rgba(214,0,0,.2); border-color:#D60000; }
     .form-foot { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; font-size:13px; }
     .remember { display:flex; align-items:center; gap:7px; }
@@ -103,25 +107,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .links { margin-top:12px; text-align:center; font-size:13px; color:#6B7280; }
     .links a { color:#D60000; text-decoration:none; font-weight:600; }
     .links a:hover { text-decoration:underline; }
+    @media (max-width:980px) {
+      .login-frame { grid-template-columns:1fr; gap:16px; }
+      .login-side { padding:0 4px; }
+      .login-side h2 { font-size:30px; }
+      .login-card { max-width:460px; margin:0 auto; padding:24px; }
+    }
   </style>
 </head>
 <body>
   <main class="login-wrap">
-    <section class="login-card">
-      <div class="brand">
-        <div class="brand-dot">H</div>
-        <strong>HDSPTV</strong>
-      </div>
+    <div class="login-frame">
+      <section class="login-side">
+        <h2>Sign in to your newsroom account</h2>
+        <p>Manage live updates, publish stories faster, and access your HDSPTV dashboard tools with a secure sign-in flow.</p>
+      </section>
 
-      <h1>Sign in to HDSPTV</h1>
-      <p class="subtitle">Access your news dashboard, live updates, saved content, and account settings.</p>
-      <p class="subtitle" style="margin-top:-6px;">HDSPTV user login is upgraded with script fixes, improved error handling, better validation, and a cleaner professional sign-in flow.</p>
+      <section class="login-card">
+        <div class="brand">
+          <div class="brand-dot">H</div>
+          <strong>HDSPTV</strong>
+        </div>
 
-      <?php if ($error): ?>
-        <div class="error"><?= htmlspecialchars($error) ?></div>
-      <?php endif; ?>
+        <h1>Sign in to HDSPTV</h1>
+        <p class="subtitle">Access your news dashboard, live updates, saved content, and account settings.</p>
+        <p class="subtitle" style="margin-top:-6px;">HDSPTV user login is upgraded with script fixes, improved error handling, better validation, and a cleaner professional sign-in flow.</p>
 
-      <form method="post">
+        <?php if ($error): ?>
+          <div class="error"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+
+        <form method="post">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['hs_login_csrf']) ?>">
 
         <label for="email">Email address</label>
@@ -139,12 +155,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <button class="btn" type="submit">Sign In</button>
-      </form>
+        </form>
 
-      <div class="links">
-        <a href="<?= hs_base_url('auth/register.php') ?>">Create Account</a>
-      </div>
-    </section>
+        <div class="links">
+          <a href="<?= hs_base_url('auth/register.php') ?>">Create Account</a>
+        </div>
+      </section>
+    </div>
   </main>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
