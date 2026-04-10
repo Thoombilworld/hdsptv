@@ -463,6 +463,43 @@ function hs_is_admin_logged_in()
     return hs_staff_role() === 'admin';
 }
 
+function hs_authenticate_staff($email, $password)
+{
+    $db = hs_db();
+    if (!$db) return null;
+
+    $email = strtolower(trim((string)$email));
+    $password = (string)$password;
+    if ($email === '' || $password === '') return null;
+
+    $stmt = mysqli_prepare($db, "SELECT id, name, email, role, status, password_hash FROM hs_users WHERE email = ? LIMIT 1");
+    if (!$stmt) return null;
+
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $user = $res ? mysqli_fetch_assoc($res) : null;
+
+    if (!$user || ($user['status'] ?? 'inactive') !== 'active') {
+        return null;
+    }
+
+    if (!password_verify($password, (string)($user['password_hash'] ?? ''))) {
+        return null;
+    }
+
+    unset($user['password_hash']);
+    return $user;
+}
+
+function hs_set_staff_session(array $user)
+{
+    session_regenerate_id(true);
+    $_SESSION['hs_admin_id'] = (int)($user['id'] ?? 0);
+    $_SESSION['hs_admin_role'] = $user['role'] ?? 'admin';
+    $_SESSION['hs_admin_name'] = $user['name'] ?? 'Admin';
+}
+
 function hs_require_staff(array $roles = ['admin'])
 {
     $staff = hs_current_staff();
