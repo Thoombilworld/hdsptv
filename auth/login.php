@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </main>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form[method=\"post\"]');
+    const form = document.querySelector('form[method="post"]');
     const email = document.getElementById('email');
     const password = document.getElementById('password');
     if (!form || !email || !password) return;
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
       }
 
-      const emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(emailValue)) {
         event.preventDefault();
         email.setCustomValidity('Please enter a valid email address.');
