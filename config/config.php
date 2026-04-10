@@ -1,5 +1,5 @@
 <?php
-// NEWS HDSPTV - config bootstrap (V20 enterprise pro)
+// NEWS HDSPTV - config bootstrap (V34 enterprise full system)
 
 $envFile = __DIR__ . '/../.env.php';
 $defaultBase = (isset($_SERVER['HTTP_HOST'])
@@ -25,6 +25,7 @@ require $envFile;
 define('HS_INSTALLED', true);
 
 define('HS_APP_NAME', $HS_APP_NAME ?? 'NEWS HDSPTV');
+define('HS_PLATFORM_VERSION', $HS_PLATFORM_VERSION ?? 'V34');
 define('HS_BASE_URL', rtrim($HS_BASE_URL ?? $defaultBase, '/') . '/');
 
 $HS_DB_HOST = $HS_DB_HOST ?? 'localhost';
