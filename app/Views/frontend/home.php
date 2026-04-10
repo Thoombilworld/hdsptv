@@ -1064,7 +1064,7 @@
             <input type="hidden" name="<?= htmlspecialchars($key) ?>" value="<?= htmlspecialchars($value) ?>">
           <?php endforeach; ?>
         </form>
-      </div>
+      </section>
       <div class="user-bar">
         <?php $u = hs_current_user(); ?>
         <?php if ($u): ?>
@@ -1244,7 +1244,7 @@
         </div>
       </section>
 
-      <div class="card" id="regions">
+      <section class="card" id="regions">
         <div class="pill"><span class="pill-dot"></span> Top Breaking Stories</div>
         <div class="region-row">
           <div class="region-block" id="india">
@@ -1259,7 +1259,7 @@
                 <?php foreach (array_slice($india_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1283,7 +1283,7 @@
                 <?php foreach (array_slice($gcc_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1307,7 +1307,7 @@
                 <?php foreach (array_slice($kerala_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1333,7 +1333,7 @@
                 <?php foreach (array_slice($world_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1357,7 +1357,7 @@
                 <?php foreach (array_slice($sports_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1381,7 +1381,7 @@
                 <?php foreach (array_slice($posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1393,7 +1393,7 @@
             <?php endif; ?>
           </div>
         </div>
-      </div>
+      </section>
 
     <section class="card">
       <div class="section-shell">

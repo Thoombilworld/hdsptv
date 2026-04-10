@@ -138,23 +138,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="post">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['hs_login_csrf']) ?>">
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['hs_login_csrf']) ?>">
 
-        <label for="email">Email address</label>
-        <input id="email" type="email" name="email" value="<?= htmlspecialchars($email) ?>" autocomplete="email" required>
+          <label for="email">Email address</label>
+          <input id="email" type="email" name="email" value="<?= htmlspecialchars($email) ?>" autocomplete="email" required>
 
-        <label for="password">Password</label>
-        <input id="password" type="password" name="password" autocomplete="current-password" required>
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password" autocomplete="current-password" required>
 
-        <div class="form-foot">
-          <label class="remember" for="remember_me">
-            <input id="remember_me" type="checkbox" name="remember_me" value="1" <?= $remember ? 'checked' : '' ?>>
-            Remember me
-          </label>
-          <a href="<?= hs_base_url('auth/forgot.php') ?>">Forgot Password?</a>
-        </div>
+          <div class="form-foot">
+            <label class="remember" for="remember_me">
+              <input id="remember_me" type="checkbox" name="remember_me" value="1" <?= $remember ? 'checked' : '' ?>>
+              Remember me
+            </label>
+            <a href="<?= hs_base_url('auth/forgot.php') ?>">Forgot Password?</a>
+          </div>
 
-        <button class="btn" type="submit">Sign In</button>
+          <button class="btn" type="submit">Sign In</button>
         </form>
 
         <div class="links">
