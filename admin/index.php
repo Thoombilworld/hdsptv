@@ -110,6 +110,7 @@ if ($db) {
     .global-search input { width:min(560px,100%); padding:10px 12px; border-radius:10px; border:1px solid var(--admin-border); }
     .top-actions { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
     .btnx { border:1px solid var(--admin-border); background:#fff; color:#111; border-radius:10px; padding:8px 10px; font-size:12px; font-weight:700; }
+    a.btnx { display:inline-flex; align-items:center; text-decoration:none; }
     .btnx.primary { background:#D60000; color:#fff; border-color:#B50000; }
     .btnx.live { background:#111; color:#fff; border-color:#303030; }
     .btnx.warn { background:#F59E0B; color:#111; border-color:#D97706; }
@@ -191,10 +192,10 @@ if ($db) {
         <input type="text" name="q" placeholder="Search news, reporters, categories...">
       </form>
       <div class="top-actions">
-        <button class="btnx primary" type="button">+ Create News</button>
-        <button class="btnx live" type="button">Go Live</button>
-        <button class="btnx warn" type="button">Send Alert</button>
-        <button class="btnx" type="button">Upload Video</button>
+        <a class="btnx primary" href="<?= hs_base_url('admin/content/article_add.php') ?>">+ Create News</a>
+        <a class="btnx live" href="<?= hs_base_url('admin/system.php') ?>">Go Live</a>
+        <a class="btnx warn" href="<?= hs_base_url('admin/homepage.php') ?>">Send Alert</a>
+        <a class="btnx" href="<?= hs_base_url('admin/content/articles.php') ?>">Upload Video</a>
         <button class="btnx" type="button" id="modeToggle">🌙/☀️</button>
       </div>
     </header>
