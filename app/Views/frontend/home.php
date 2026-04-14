@@ -17,19 +17,21 @@
   $languageCode = hs_current_language_code();
   $languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
 
-  function hs_render_ad($ad) {
-      if (!$ad) return '';
-      if (!empty($ad['code'])) {
-          return $ad['code'];
-      }
-      if (!empty($ad['image_url'])) {
-          $img = '<img src="' . hs_base_url($ad['image_url']) . '" alt="Advertisement">';
-          if (!empty($ad['link_url'])) {
-              return '<a href="' . htmlspecialchars($ad['link_url']) . '" target="_blank" rel="noopener">' . $img . '</a>';
+  if (!function_exists('hs_render_ad')) {
+      function hs_render_ad($ad) {
+          if (!$ad) return '';
+          if (!empty($ad['code'])) {
+              return $ad['code'];
           }
-          return $img;
+          if (!empty($ad['image_url'])) {
+              $img = '<img src="' . hs_base_url($ad['image_url']) . '" alt="Advertisement">';
+              if (!empty($ad['link_url'])) {
+                  return '<a href="' . htmlspecialchars($ad['link_url']) . '" target="_blank" rel="noopener">' . $img . '</a>';
+              }
+              return $img;
+          }
+          return '';
       }
-      return '';
   }
 ?>
 <!doctype html>
@@ -982,14 +984,18 @@
     $category_nav_cards = array_slice($category_nav_cards, 0, 18);
   }
 
-  function hs_post_date($p) {
-    return !empty($p['created_at']) ? date('M j, Y', strtotime($p['created_at'])) : '';
+  if (!function_exists('hs_post_date')) {
+    function hs_post_date($p) {
+      return !empty($p['created_at']) ? date('M j, Y', strtotime($p['created_at'])) : '';
+    }
   }
 
-  function hs_excerpt($text, $length = 140) {
-    $clean = trim(strip_tags($text ?? ''));
-    if (strlen($clean) <= $length) return $clean;
-    return substr($clean, 0, $length - 3) . '...';
+  if (!function_exists('hs_excerpt')) {
+    function hs_excerpt($text, $length = 140) {
+      $clean = trim(strip_tags($text ?? ''));
+      if (strlen($clean) <= $length) return $clean;
+      return substr($clean, 0, $length - 3) . '...';
+    }
   }
 
   $nowDate = date('D, M j, Y');
