@@ -7,9 +7,17 @@ $staff = hs_current_staff();
 $role = $staff['role'] ?? 'admin';
 $db = hs_db();
 
-$safe_count = function (string $sql) use ($db): int {
-    if (!$db) return 0;
-    $res = @mysqli_query($db, $sql);
+$safe_query = function (string $sql) use ($db) {
+    if (!$db) return false;
+    try {
+        return mysqli_query($db, $sql);
+    } catch (Throwable $e) {
+        return false;
+    }
+};
+
+$safe_count = function (string $sql) use ($safe_query): int {
+    $res = $safe_query($sql);
     if (!$res) return 0;
     $row = mysqli_fetch_row($res);
     return (int)($row[0] ?? 0);
@@ -30,17 +38,17 @@ $adRevenueToday = (float)($settings['ad_revenue_today'] ?? 0);
 $streamHealth = $settings['stream_health'] ?? 'Standby';
 
 if ($db) {
-    $res = @mysqli_query($db, "SELECT c.name, COUNT(*) as total FROM hs_posts p LEFT JOIN hs_categories c ON c.id=p.category_id WHERE p.status='published' GROUP BY p.category_id ORDER BY total DESC LIMIT 1");
+    $res = $safe_query("SELECT c.name, COUNT(*) as total FROM hs_posts p LEFT JOIN hs_categories c ON c.id=p.category_id WHERE p.status='published' GROUP BY p.category_id ORDER BY total DESC LIMIT 1");
     if ($res && ($row = mysqli_fetch_assoc($res))) {
         $topCategory = $row['name'] ?: 'Uncategorized';
     }
 
-    $res = @mysqli_query($db, "SELECT COALESCE(author,'Reporter') as author, COUNT(*) as total FROM hs_posts WHERE status='published' GROUP BY author ORDER BY total DESC LIMIT 1");
+    $res = $safe_query("SELECT COALESCE(author,'Reporter') as author, COUNT(*) as total FROM hs_posts WHERE status='published' GROUP BY author ORDER BY total DESC LIMIT 1");
     if ($res && ($row = mysqli_fetch_assoc($res))) {
         $topReporter = $row['author'];
     }
 
-    $res = @mysqli_query($db, "SELECT title FROM hs_posts WHERE status='published' ORDER BY created_at DESC LIMIT 1");
+    $res = $safe_query("SELECT title FROM hs_posts WHERE status='published' ORDER BY created_at DESC LIMIT 1");
     if ($res && ($row = mysqli_fetch_assoc($res))) {
         $mostViewedStory = $row['title'];
     }
@@ -48,7 +56,8 @@ if ($db) {
 
 $recentNews = [];
 if ($db) {
-    $res = @mysqli_query($db, "SELECT title, status, created_at, priority, author FROM hs_posts ORDER BY created_at DESC LIMIT 8");
+    $priorityExpr = hs_table_has_columns('hs_posts', ['priority']) ? 'priority' : "'Normal' AS priority";
+    $res = $safe_query("SELECT title, status, created_at, {$priorityExpr}, author FROM hs_posts ORDER BY created_at DESC LIMIT 8");
     if ($res) {
         while ($row = mysqli_fetch_assoc($res)) $recentNews[] = $row;
     }
@@ -56,7 +65,10 @@ if ($db) {
 
 $trendingWidget = [];
 if ($db) {
-    $res = @mysqli_query($db, "SELECT title, COALESCE(views,0) as views, COALESCE(engagement_score,0) as engagement_score, is_featured FROM hs_posts WHERE status='published' ORDER BY created_at DESC LIMIT 5");
+    $viewsExpr = hs_table_has_columns('hs_posts', ['views']) ? 'COALESCE(views,0) AS views' : '0 AS views';
+    $engagementExpr = hs_table_has_columns('hs_posts', ['engagement_score']) ? 'COALESCE(engagement_score,0) AS engagement_score' : '0 AS engagement_score';
+    $featuredExpr = hs_table_has_columns('hs_posts', ['is_featured']) ? 'is_featured' : '0 AS is_featured';
+    $res = $safe_query("SELECT title, {$viewsExpr}, {$engagementExpr}, {$featuredExpr} FROM hs_posts WHERE status='published' ORDER BY created_at DESC LIMIT 5");
     if ($res) {
         while ($row = mysqli_fetch_assoc($res)) $trendingWidget[] = $row;
     }
@@ -64,7 +76,7 @@ if ($db) {
 
 $reporterWidget = [];
 if ($db) {
-    $res = @mysqli_query($db, "SELECT COALESCE(author,'Reporter') as author, COUNT(*) as submitted FROM hs_posts WHERE DATE(created_at)=CURDATE() GROUP BY author ORDER BY submitted DESC LIMIT 5");
+    $res = $safe_query("SELECT COALESCE(author,'Reporter') as author, COUNT(*) as submitted FROM hs_posts WHERE DATE(created_at)=CURDATE() GROUP BY author ORDER BY submitted DESC LIMIT 5");
     if ($res) {
         while ($row = mysqli_fetch_assoc($res)) $reporterWidget[] = $row;
     }
