@@ -145,5 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     </section>
   </main>
+<script type="module" src="<?= hs_base_url('assets/js/analytics.js') ?>"></script>
 </body>
 </html>

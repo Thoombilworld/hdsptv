@@ -48,5 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="password" name="password_confirm" style="width:100%;" required><br><br>
     <button type="submit">Register</button>
   </form>
+<script type="module" src="<?= hs_base_url('assets/js/analytics.js') ?>"></script>
 </body>
 </html>

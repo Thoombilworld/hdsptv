@@ -227,5 +227,6 @@ $languageDir = hs_is_rtl($languageCode) ? 'rtl' : 'ltr';
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
   <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($site_title) ?>. <?= htmlspecialchars(hs_t('footer_rights', 'All rights reserved.')) ?></div>
 </footer>
+<script type="module" src="<?= hs_base_url('assets/js/analytics.js') ?>"></script>
 </body>
 </html>

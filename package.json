@@ -1,0 +1,12 @@
+{
+  "name": "hdsptv-news-platform",
+  "version": "3.4.0",
+  "description": "HDSPTV News CMS Platform",
+  "private": true,
+  "scripts": {
+    "build": "echo 'No build step required for PHP application'"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.1.1"
+  }
+}

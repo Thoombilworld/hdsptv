@@ -27,5 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="email" name="email" style="width:100%;" required><br><br>
     <button type="submit">Generate Reset Token</button>
   </form>
+<script type="module" src="<?= hs_base_url('assets/js/analytics.js') ?>"></script>
 </body>
 </html>

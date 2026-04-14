@@ -332,5 +332,6 @@ $canonical = hs_tag_url($tag['slug']);
   <div class="footer-links"><?= hs_footer_links_html(); ?></div>
   <div class="footer-copy">© <?= date('Y') ?> <?= htmlspecialchars($settings['site_title'] ?? 'NEWS HDSPTV') ?>. All rights reserved.</div>
 </footer>
+<script type="module" src="<?= hs_base_url('assets/js/analytics.js') ?>"></script>
 </body>
 </html>

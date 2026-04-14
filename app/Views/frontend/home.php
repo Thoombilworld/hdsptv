@@ -1688,5 +1688,6 @@
     });
   }
 </script>
+<script type="module" src="<?= hs_base_url('assets/js/analytics.js') ?>"></script>
 </body>
 </html>
