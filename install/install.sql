@@ -7,9 +7,9 @@ CREATE TABLE IF NOT EXISTS hs_settings (
 INSERT INTO hs_settings (`key`,`value`) VALUES
 ('site_title','NEWS HDSPTV'),
 ('tagline','News for India, GCC, Kerala & the World'),
-('logo','assets/images/logo.png'),
+('logo','assets/images/logo.svg'),
 ('theme','dark'),
-('favicon','assets/images/favicon.png'),
+('favicon','assets/images/favicon.svg'),
 ('default_language','en'),
 ('hp_show_breaking','1'),
 ('hp_show_featured','1'),

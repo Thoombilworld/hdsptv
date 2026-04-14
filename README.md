@@ -23,4 +23,13 @@ This repository contains the HDSPTV news CMS, including the public site, admin p
 - Reporter and editor performance cards are available in **Admin → Analytics** when reporter/editor assignments are set on articles.
 
 ## File completeness check
-The System Health page now surfaces missing critical files (config, installer SQL, CSS, and language packs). After extraction or deployment, you can also compare your directory tree against this repository using your preferred diff tool. The installer and admin dashboards depend on assets under `assets/`, language files in `lang/`, and writable directories in `writable/`, so ensure those paths remain intact.
+The System Health page now checks for missing critical files, including configuration files, installer SQL, CSS, and language packs. After extraction or deployment, compare your directory structure against this repository using your preferred diff tool. The installer and admin dashboards rely on the `assets/` folder, language files in `lang/`, and writable directories in `writable/`, so make sure those paths remain intact.
+
+## System Health UI (V34)
+- The admin **System Health** screen includes a V34 version chip and summary cards for passed checks, warnings, failures, and total checks before the detailed checklist.
+
+## Product blueprint
+- The canonical build/reference blueprint for the international HDSPTV direction is documented in `docs/HDSPTV_INTERNATIONAL_BLUEPRINT.md`.
+
+## PR troubleshooting
+- If PR creation fails in your UI/client, use `scripts/pr_preflight.sh` and see `docs/PR_CREATION_TROUBLESHOOTING.md`.

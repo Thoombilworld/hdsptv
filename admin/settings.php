@@ -75,12 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-row">
           <div class="field">
             <label>Logo URL</label>
-            <input type="text" name="logo" value="<?= htmlspecialchars($settings['logo'] ?? '') ?>" placeholder="https://.../logo.png">
+            <input type="text" name="logo" value="<?= htmlspecialchars($settings['logo'] ?? '') ?>" placeholder="https://.../logo.svg">
             <div class="admin-subtext">Used in the sticky header and footer.</div>
           </div>
           <div class="field">
             <label>Favicon URL</label>
-            <input type="text" name="favicon" value="<?= htmlspecialchars($settings['favicon'] ?? '') ?>" placeholder="https://.../favicon.png">
+            <input type="text" name="favicon" value="<?= htmlspecialchars($settings['favicon'] ?? '') ?>" placeholder="https://.../favicon.svg">
           </div>
         </div>
         <div class="form-row">

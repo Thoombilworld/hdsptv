@@ -1,0 +1,8 @@
+# Avoid binary diff rendering in constrained PR tools.
+*.zip -diff
+*.png -diff
+*.jpg -diff
+*.jpeg -diff
+*.gif -diff
+*.webp -diff
+*.ico -diff

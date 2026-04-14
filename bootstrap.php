@@ -2,6 +2,19 @@
 session_start();
 require __DIR__ . '/config/config.php';
 
+// Runtime path bootstrap: create critical writable/assets folders when missing.
+$hs_runtime_dirs = [
+    __DIR__ . '/writable',
+    __DIR__ . '/writable/logs',
+    __DIR__ . '/writable/uploads',
+    __DIR__ . '/assets/images',
+];
+foreach ($hs_runtime_dirs as $dir) {
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0775, true);
+    }
+}
+
 if (!defined('HS_INSTALLED') || !HS_INSTALLED) {
     http_response_code(503);
     echo "<h2 style=\"font-family:system-ui,sans-serif; text-align:center; margin-top:32px;\">Application not installed</h2>";
@@ -241,9 +254,9 @@ function hs_settings($force_reload = false)
     $settings = [
         'site_title' => HS_APP_NAME,
         'tagline'    => 'News for India, GCC, Kerala & the World',
-        'logo'       => hs_base_url('assets/images/logo.png'),
+        'logo'       => hs_base_url('assets/images/logo.svg'),
         'theme'      => 'dark',
-        'favicon'    => hs_base_url('assets/images/favicon.png'),
+        'favicon'    => hs_base_url('assets/images/favicon.svg'),
         'default_language' => 'en',
         // Homepage layout defaults
         'hp_show_breaking' => '1',
@@ -463,6 +476,43 @@ function hs_is_admin_logged_in()
     return hs_staff_role() === 'admin';
 }
 
+function hs_authenticate_staff($email, $password)
+{
+    $db = hs_db();
+    if (!$db) return null;
+
+    $email = strtolower(trim((string)$email));
+    $password = (string)$password;
+    if ($email === '' || $password === '') return null;
+
+    $stmt = mysqli_prepare($db, "SELECT id, name, email, role, status, password_hash FROM hs_users WHERE email = ? LIMIT 1");
+    if (!$stmt) return null;
+
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $user = $res ? mysqli_fetch_assoc($res) : null;
+
+    if (!$user || ($user['status'] ?? 'inactive') !== 'active') {
+        return null;
+    }
+
+    if (!password_verify($password, (string)($user['password_hash'] ?? ''))) {
+        return null;
+    }
+
+    unset($user['password_hash']);
+    return $user;
+}
+
+function hs_set_staff_session(array $user)
+{
+    session_regenerate_id(true);
+    $_SESSION['hs_admin_id'] = (int)($user['id'] ?? 0);
+    $_SESSION['hs_admin_role'] = $user['role'] ?? 'admin';
+    $_SESSION['hs_admin_name'] = $user['name'] ?? 'Admin';
+}
+
 function hs_require_staff(array $roles = ['admin'])
 {
     $staff = hs_current_staff();
@@ -661,6 +711,8 @@ function hs_system_checks()
         __DIR__ . '/bootstrap.php' => 'bootstrap.php',
         __DIR__ . '/app/Views/frontend/home.php' => 'app/Views/frontend/home.php',
         __DIR__ . '/assets/css/style.css' => 'assets/css/style.css',
+        __DIR__ . '/assets/images/logo.svg' => 'assets/images/logo.svg',
+        __DIR__ . '/assets/images/favicon.svg' => 'assets/images/favicon.svg',
         __DIR__ . '/install/install.sql' => 'install/install.sql',
         __DIR__ . '/lang/en.php' => 'lang/en.php',
         __DIR__ . '/lang/ar.php' => 'lang/ar.php',
@@ -674,10 +726,13 @@ function hs_system_checks()
         }
     }
 
+    $verifiedCount = count($requiredFiles) - count($missingFiles);
     $checks[] = [
         'label' => 'Required files',
         'status' => empty($missingFiles) ? 'ok' : 'fail',
-        'detail' => empty($missingFiles) ? 'Key application files present.' : ('Missing: ' . implode(', ', $missingFiles)),
+        'detail' => empty($missingFiles)
+            ? ('Key critical files are present (' . $verifiedCount . '/' . count($requiredFiles) . ').')
+            : ('Critical file check: ' . $verifiedCount . '/' . count($requiredFiles) . ' present. Missing: ' . implode(', ', $missingFiles)),
     ];
 
     $extensions = ['mysqli', 'json', 'mbstring'];

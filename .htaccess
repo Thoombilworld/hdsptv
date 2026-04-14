@@ -27,6 +27,7 @@ RewriteRule ^search/?$ search.php [L,QSA]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^login/?$ auth/login.php [L,QSA]
+RewriteRule ^logout/?$ auth/logout.php [L,QSA]
 RewriteRule ^register/?$ auth/register.php [L,QSA]
 RewriteRule ^forgot-password/?$ auth/forgot.php [L,QSA]
 RewriteRule ^reset-password/?$ auth/reset.php [L,QSA]

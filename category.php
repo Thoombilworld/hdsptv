@@ -84,7 +84,7 @@ $canonical = hs_category_url($category['slug']);
   <meta name="description" content="<?= htmlspecialchars($meta_desc) ?>">
   <meta name="keywords" content="<?= htmlspecialchars($meta_keys) ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="<?= htmlspecialchars($settings['favicon'] ?? hs_base_url('assets/images/favicon.png')) ?>">
+  <link rel="icon" href="<?= htmlspecialchars($settings['favicon'] ?? hs_base_url('assets/images/favicon.svg')) ?>">
   <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
   <link rel="stylesheet" href="<?= hs_base_url('assets/css/style.css') ?>">
   <style>

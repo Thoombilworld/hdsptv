@@ -12,8 +12,6 @@
   $featured     = $featured     ?? [];
   $breaking     = $breaking     ?? [];
   $trending     = $trending     ?? [];
-  $videos       = $videos       ?? [];
-  $galleries    = $galleries    ?? [];
   $all_categories = $all_categories ?? [];
 
   $languageCode = hs_current_language_code();
@@ -44,19 +42,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="stylesheet" href="<?= hs_base_url('assets/css/style.css') ?>">
-  <link rel="icon" href="<?= htmlspecialchars($settings['favicon'] ?? hs_base_url('assets/images/favicon.png')) ?>">
+  <link rel="icon" href="<?= htmlspecialchars($settings['favicon'] ?? hs_base_url('assets/images/favicon.svg')) ?>">
 
   <style>
     :root {
-      --hs-primary: <?= $palette['primary'] ?>;
-      --hs-primary-dark: <?= $palette['primary_dark'] ?>;
-      --hs-accent: <?= $palette['accent'] ?>;
-      --hs-bg: <?= $palette['bg'] ?>;
-      --hs-surface: <?= $palette['surface'] ?>;
-      --hs-card: <?= $palette['card'] ?>;
-      --hs-text: <?= $palette['text'] ?>;
-      --hs-muted: <?= $palette['muted'] ?>;
-      --hs-border: <?= $palette['border'] ?>;
+      --hs-primary: #D60000;
+      --hs-primary-dark: #9E0000;
+      --hs-accent: #D60000;
+      --hs-bg: #F7F7F7;
+      --hs-surface: #FFFFFF;
+      --hs-card: #FFFFFF;
+      --hs-text: #111111;
+      --hs-muted: #6B7280;
+      --hs-border: #E5E7EB;
+      --hs-success: #16A34A;
+      --hs-warning: #F59E0B;
+      --hs-space-8: 8px;
+      --hs-space-16: 16px;
+      --hs-space-24: 24px;
+      --hs-space-32: 32px;
+      --hs-space-40: 40px;
+      --hs-frame-pad: 80px;
     }
 
     body {
@@ -65,6 +71,7 @@
       background: #F5F7FB;
       color: var(--hs-text);
     }
+    *, *::before, *::after { box-sizing:border-box; }
 
     a { color: var(--hs-accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -76,18 +83,19 @@
       backdrop-filter: blur(18px);
       background: #0F172A;
       border-bottom: 1px solid var(--hs-border);
-      padding: 10px 0;
-      box-shadow: 0 10px 35px rgba(15, 23, 42, 0.18);
+      min-height: 92px;
+      padding: 12px 0;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
     }
 
     .header-inner {
-      width: min(1280px, 100% - 20px);
+      width: min(1280px, 100% - (var(--hs-frame-pad) * 2));
       margin: 0 auto;
       display: grid;
       grid-template-columns: auto 1fr;
       gap: 14px;
       align-items: center;
-      padding: 0 10px;
+      padding: 0;
     }
 
     .top-left {
@@ -161,25 +169,6 @@
     }
     .nav-main a:hover { background:rgba(15,23,42,0.8); color:#FACC15; text-decoration:none; }
 
-    .nav-categories {
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .nav-categories .chip {
-      background:rgba(30,41,59,0.9);
-      color:#E5E7EB;
-      border:1px solid rgba(148,163,184,0.5);
-      border-radius:12px;
-      padding:8px 12px;
-      font-size:11px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      box-shadow:0 8px 20px rgba(0,0,0,0.18);
-    }
-    .nav-categories .chip:hover { background:rgba(30,64,175,0.5); color:#FACC15; text-decoration:none; }
-
     .category-ribbon {
       width:100%;
       background:#0B1120;
@@ -187,9 +176,9 @@
       box-shadow:0 18px 38px rgba(15,23,42,0.18);
     }
     .category-ribbon-inner {
-      width:min(1280px, 100% - 20px);
+      width:min(1280px, 100% - (var(--hs-frame-pad) * 2));
       margin:0 auto;
-      padding:10px 12px 12px;
+      padding:8px 12px 10px;
     }
     .category-ribbon-head {
       display:flex;
@@ -291,16 +280,17 @@
     }
 
     .page {
-      width:min(1280px, 100% - 20px);
+      width:min(1280px, 100% - (var(--hs-frame-pad) * 2));
       margin:0 auto;
       min-height:100vh;
     }
 
     .layout-main {
       display:grid;
-      grid-template-columns: minmax(0,3.2fr) minmax(0,2fr);
-      gap:14px;
-      padding:12px 0 28px;
+      grid-template-columns: minmax(0,2fr) minmax(0,1fr);
+      gap:var(--hs-space-24);
+      padding:var(--hs-space-24) 0 var(--hs-space-40);
+      align-items:start;
     }
 
     @media (max-width:1080px) {
@@ -315,12 +305,13 @@
 
     .card {
       background: #FFFFFF;
-      border-radius:18px;
-      box-shadow:0 16px 40px rgba(15,23,42,0.10);
-      border:1px solid rgba(15,23,42,0.08);
-      padding:14px 16px;
-      margin-bottom:14px;
+      border-radius:16px;
+      box-shadow:0 10px 24px rgba(15,23,42,0.08);
+      border:1px solid #E5E7EB;
+      padding:20px;
+      margin-bottom:16px;
     }
+    .column > :last-child { margin-bottom:0; }
 
     .pill {
       display:inline-flex;
@@ -351,6 +342,50 @@
       margin-bottom:8px;
     }
 
+    .top-meta-strip {
+      width:min(1280px, 100% - (var(--hs-frame-pad) * 2));
+      margin:6px auto 0;
+      background:#FFFFFF;
+      border:1px solid var(--hs-border);
+      border-radius:14px;
+      padding:8px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      color:#111111;
+      font-size:12px;
+    }
+    .top-meta-strip .meta-left,
+    .top-meta-strip .meta-right {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .live-badge {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border-radius:999px;
+      padding:4px 10px;
+      background:rgba(214,0,0,0.12);
+      border:1px solid rgba(214,0,0,0.38);
+      color:#D60000;
+      font-weight:700;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .live-dot {
+      width:7px; height:7px; border-radius:999px; background:#D60000;
+      box-shadow:0 0 0 6px rgba(214,0,0,0.15);
+      animation: pulseLive 1.5s ease-in-out infinite;
+    }
+    @keyframes pulseLive {
+      0%, 100% { transform:scale(1); opacity:1; }
+      50% { transform:scale(1.2); opacity:.7; }
+    }
+
     .ticker {
       width:100%;
       display:flex;
@@ -358,23 +393,24 @@
       gap:10px;
       padding:6px 18px;
       box-sizing:border-box;
-      border-bottom:1px solid rgba(15,23,42,0.85);
-      background:linear-gradient(90deg, rgba(15,23,42,0.9), rgba(15,23,42,0.85));
+      border:1px solid rgba(214,0,0,0.18);
+      background:linear-gradient(90deg, rgba(214,0,0,0.95), rgba(158,0,0,0.95));
       overflow-x:auto;
       white-space:nowrap;
+      margin-top:8px;
     }
     .ticker-label {
       font-size:11px;
       font-weight:700;
       text-transform:uppercase;
       letter-spacing:.16em;
-      color:#FACC15;
+      color:#ffffff;
     }
     .ticker-items {
       font-size:12px;
       display:flex;
       gap:18px;
-      color:#E5E7EB;
+      color:#fff;
     }
     .ticker-item {
       opacity:.9;
@@ -729,10 +765,11 @@
     }
     .category-card {
       background:#FFFFFF;
-      border-radius:14px;
+      border-radius:16px;
       border:1px solid rgba(15,23,42,0.08);
       box-shadow:0 12px 30px rgba(15,23,42,0.12);
-      padding:12px;
+      padding:20px;
+      min-height:140px;
       display:flex;
       flex-direction:column;
       gap:6px;
@@ -761,7 +798,9 @@
       margin:18px 0 8px;
       display:flex;
       align-items:center;
+      justify-content:space-between;
       gap:10px;
+      flex-wrap:wrap;
     }
     .section-shell h2 {
       margin:0;
@@ -769,6 +808,42 @@
       letter-spacing:.14em;
       text-transform:uppercase;
     }
+    .release-banner {
+      margin:12px 0 4px;
+      background:#111111;
+      color:#fff;
+      border-radius:14px;
+      border:1px solid #2E2E2E;
+      padding:10px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .release-banner strong {
+      color:#fff;
+      font-size:14px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .release-banner span {
+      color:#E5E7EB;
+      font-size:12px;
+    }
+    .quick-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:12px;
+    }
+    .quick-item {
+      border:1px solid var(--hs-border);
+      border-radius:12px;
+      padding:10px;
+      background:#fff;
+    }
+    .quick-item h4 { margin:0 0 6px; font-size:13px; }
+    .quick-item p { margin:0; font-size:12px; color:var(--hs-muted); }
 
 
     .ads-slot {
@@ -786,8 +861,8 @@
 
     footer {
       border-top:1px solid rgba(31,41,55,0.9);
-      padding:10px 18px 16px;
-      font-size:11px;
+      padding:24px 18px;
+      font-size:13px;
       color:#9CA3AF;
       text-align:center;
       background:linear-gradient(180deg, rgba(15,23,42,0.98), #020617);
@@ -797,12 +872,15 @@
     .footer-links a:hover { color:#FACC15; text-decoration:none; }
 
     @media (max-width:980px) {
+      :root { --hs-frame-pad: 20px; }
       .layout-main {
         grid-template-columns: minmax(0,1fr);
       }
     }
 
     @media (max-width:640px) {
+      :root { --hs-frame-pad: 16px; }
+      .top-meta-strip { margin-top:6px; padding:8px 10px; }
       header {
         padding:8px 10px;
       }
@@ -826,20 +904,6 @@
   $kerala_posts = [];
   $world_posts  = [];
   $sports_posts = [];
-
-  // New category collections
-  $entertainment_posts = [];
-  $business_posts      = [];
-  $technology_posts    = [];
-  $lifestyle_posts     = [];
-  $health_posts        = [];
-  $travel_posts        = [];
-  $auto_posts          = [];
-  $opinion_posts       = [];
-  $politics_posts      = [];
-  $crime_posts         = [];
-  $education_posts     = [];
-  $religion_posts      = [];
 
   $gcc_country_blocks = [
     'qatar'   => [],
@@ -871,7 +935,6 @@
       case 'sports': $sports_posts[] = $p; break;
     }
 
-    $cat_name = strtolower($p['category_name'] ?? '');
     $cat_slug = strtolower($p['category_slug'] ?? '');
 
     if (isset($gcc_country_blocks[$cat_slug])) {
@@ -885,20 +948,6 @@
       $category_posts[$cat_slug][] = $p;
     }
 
-    switch ($cat_name) {
-      case 'entertainment': $entertainment_posts[] = $p; break;
-      case 'business':      $business_posts[]      = $p; break;
-      case 'technology':    $technology_posts[]    = $p; break;
-      case 'lifestyle':     $lifestyle_posts[]     = $p; break;
-      case 'health':        $health_posts[]        = $p; break;
-      case 'travel':        $travel_posts[]        = $p; break;
-      case 'auto':          $auto_posts[]          = $p; break;
-      case 'opinion':       $opinion_posts[]       = $p; break;
-      case 'politics':      $politics_posts[]      = $p; break;
-      case 'crime':         $crime_posts[]         = $p; break;
-      case 'education':     $education_posts[]     = $p; break;
-      case 'religion':      $religion_posts[]      = $p; break;
-    }
   }
 
   $slider_posts = !empty($featured) ? $featured : array_slice($posts, 0, 5);
@@ -942,6 +991,12 @@
     if (strlen($clean) <= $length) return $clean;
     return substr($clean, 0, $length - 3) . '...';
   }
+
+  $nowDate = date('D, M j, Y');
+  $mockWeather = $settings['weather_label'] ?? 'Doha 31°C';
+  $editorsPicks = array_slice(!empty($featured) ? $featured : $posts, 0, 4);
+  $mostViewed = array_slice(!empty($trending) ? $trending : $posts, 0, 6);
+  $reelPosts = array_slice($video_posts ?? [], 0, 4);
 ?>
 <header>
   <div class="header-inner">
@@ -961,14 +1016,6 @@
           <a href="<?= htmlspecialchars($item['url']) ?>"><?= htmlspecialchars(hs_t('nav_' . $item['slug'], $item['label'])) ?></a>
         <?php endforeach; ?>
       </nav>
-      <?php if (!empty($category_nav_cards)): ?>
-        <div class="nav-categories" aria-label="Quick category chips">
-          <?php foreach (array_slice($category_nav_cards, 0, 6) as $chip): ?>
-            <?php $chipSlug = $chip['slug'] ?? strtolower($chip['label']); ?>
-            <a class="chip" href="<?= hs_category_url($chipSlug) ?>"><?= htmlspecialchars($chip['label']) ?></a>
-          <?php endforeach; ?>
-        </div>
-      <?php endif; ?>
       <div class="nav-utilities stack-mobile">
         <form class="nav-search" action="<?= hs_search_url() ?>" method="get" data-testid="nav-search-form">
           <label class="sr-only" for="nav-search"><?= htmlspecialchars(hs_t('search_label', 'Search')) ?></label>
@@ -986,7 +1033,7 @@
             <input type="hidden" name="<?= htmlspecialchars($key) ?>" value="<?= htmlspecialchars($value) ?>">
           <?php endforeach; ?>
         </form>
-      </div>
+      </section>
       <div class="user-bar">
         <?php $u = hs_current_user(); ?>
         <?php if ($u): ?>
@@ -1002,6 +1049,18 @@
     </div>
   </div>
 </header>
+
+<div class="top-meta-strip">
+  <div class="meta-left">
+    <span class="live-badge"><span class="live-dot"></span> Live</span>
+    <span><?= htmlspecialchars($mockWeather) ?></span>
+    <span><?= htmlspecialchars($nowDate) ?></span>
+  </div>
+  <div class="meta-right">
+    <span><?= htmlspecialchars(hs_t('live_updates', 'Live updates active')) ?></span>
+    <a href="<?= hs_base_url('contact.php') ?>"><?= htmlspecialchars(hs_t('contact', 'Contact')) ?></a>
+  </div>
+</div>
 
 <div class="category-ribbon" aria-label="Category quick links">
   <div class="category-ribbon-inner">
@@ -1048,6 +1107,10 @@
 <?php endif; ?>
 
 <main class="page">
+  <div class="release-banner">
+    <strong>HDSPTV News Platform 2026 Edition</strong>
+    <span>Faster. Smarter. Live-Ready.</span>
+  </div>
   <div class="layout-main">
     <section class="column">
       <?php if ($layout['featured']): ?>
@@ -1129,8 +1192,29 @@
         </div>
       <?php endif; ?>
 
-      <div class="card" id="regions">
-        <div class="pill"><span class="pill-dot"></span> Region Highlights</div>
+      <section class="card">
+        <div class="section-shell">
+          <div class="pill"><span class="pill-dot"></span> Live TV Preview</div>
+          <h2>Stream, schedule & live updates</h2>
+        </div>
+        <div class="quick-grid">
+          <div class="quick-item">
+            <h4>Live TV panel</h4>
+            <p>One-tap preview card for live stream with clear LIVE status and quick access to full stream page.</p>
+          </div>
+          <div class="quick-item">
+            <h4>Upcoming schedule</h4>
+            <p>06:00 Headlines • 09:00 Gulf Focus • 13:00 Breaking Desk • 20:00 Prime Debate.</p>
+          </div>
+          <div class="quick-item">
+            <h4>Live updates</h4>
+            <p>Real-time bullet updates are shown beside the stream for fast newsroom-style scanning.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="regions">
+        <div class="pill"><span class="pill-dot"></span> Top Breaking Stories</div>
         <div class="region-row">
           <div class="region-block" id="india">
             <div class="region-header">
@@ -1144,7 +1228,7 @@
                 <?php foreach (array_slice($india_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1168,7 +1252,7 @@
                 <?php foreach (array_slice($gcc_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1192,7 +1276,7 @@
                 <?php foreach (array_slice($kerala_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1218,7 +1302,7 @@
                 <?php foreach (array_slice($world_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1242,7 +1326,7 @@
                 <?php foreach (array_slice($sports_posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1266,7 +1350,7 @@
                 <?php foreach (array_slice($posts, 0, 4) as $p): ?>
                   <li>
                     <div class="region-post-title"><a href="<?= hs_news_url($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></div>
-                                        <?php if (!empty($p['image_main'])): ?>
+                    <?php if (!empty($p['image_main'])): ?>
                       <div class="region-thumb">
                         <img src="<?= hs_base_url($p['image_main']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
                       </div>
@@ -1276,6 +1360,9 @@
                 <?php endforeach; ?>
               </ul>
             <?php endif; ?>
+          </div>
+        </div>
+      </section>
 
     <section class="card">
       <div class="section-shell">
@@ -1333,8 +1420,6 @@
       </div>
     </section>
 
-    </section>
-
     <aside class="column">
       <?php $rightAd = $layout['ads_sidebar'] ? $ad_for('homepage_right') : null; ?>
       <?php if ($layout['ads_sidebar'] && $rightAd): ?>
@@ -1345,7 +1430,7 @@
 
       <?php if ($layout['trending']): ?>
       <section class="card side-card">
-        <div class="pill"><span class="pill-dot"></span> Trending</div>
+        <div class="pill"><span class="pill-dot"></span> Trending now</div>
         <?php if (empty($trending)): ?>
           <p style="font-size:12px; color:#9CA3AF;">No trending posts yet.</p>
         <?php else: ?>
@@ -1369,10 +1454,48 @@
       </section>
       <?php endif; ?>
 
+      <section class="card side-card">
+        <div class="pill"><span class="pill-dot"></span> Editor’s picks</div>
+        <?php if (empty($editorsPicks)): ?>
+          <p style="font-size:12px; color:#9CA3AF;">No picks available yet.</p>
+        <?php else: ?>
+          <ul class="video-list">
+            <?php foreach ($editorsPicks as $pick): ?>
+              <li>
+                <div class="video-thumb">★</div>
+                <div class="video-text">
+                  <div><a href="<?= hs_news_url($pick['slug']) ?>"><?= htmlspecialchars($pick['title']) ?></a></div>
+                  <div style="font-size:10px; color:#9CA3AF;"><?= hs_post_date($pick) ?></div>
+                </div>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        <?php endif; ?>
+      </section>
+
+      <section class="card side-card">
+        <div class="pill"><span class="pill-dot"></span> Most viewed</div>
+        <?php if (empty($mostViewed)): ?>
+          <p style="font-size:12px; color:#9CA3AF;">No data yet.</p>
+        <?php else: ?>
+          <ul class="video-list">
+            <?php foreach ($mostViewed as $mv): ?>
+              <li>
+                <div class="video-thumb">👁</div>
+                <div class="video-text">
+                  <div><a href="<?= hs_news_url($mv['slug']) ?>"><?= htmlspecialchars($mv['title']) ?></a></div>
+                  <div style="font-size:10px; color:#9CA3AF;"><?= htmlspecialchars($mv['category_name'] ?: 'News') ?></div>
+                </div>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        <?php endif; ?>
+      </section>
+
       <?php if ($layout['video']): ?>
       <section class="card side-card">
-        <div class="pill"><span class="pill-dot"></span> Video</div>
-        <div class="section-title" style="margin-bottom:4px;">Video News</div>
+        <div class="pill"><span class="pill-dot"></span> Latest videos</div>
+        <div class="section-title" style="margin-bottom:4px;">Video news carousel</div>
         <?php if (empty($video_posts)): ?>
           <p style="font-size:12px; color:#9CA3AF;">No video posts yet.</p>
         <?php else: ?>
@@ -1390,6 +1513,25 @@
         <?php endif; ?>
       </section>
       <?php endif; ?>
+
+      <section class="card side-card">
+        <div class="pill"><span class="pill-dot"></span> Short reels</div>
+        <?php if (empty($reelPosts)): ?>
+          <p style="font-size:12px; color:#9CA3AF;">No short clips yet.</p>
+        <?php else: ?>
+          <ul class="video-list">
+            <?php foreach ($reelPosts as $reel): ?>
+              <li>
+                <div class="video-thumb">▮▮</div>
+                <div class="video-text">
+                  <div><a href="<?= hs_news_url($reel['slug']) ?>"><?= htmlspecialchars($reel['title']) ?></a></div>
+                  <div style="font-size:10px; color:#9CA3AF;">Vertical preview enabled</div>
+                </div>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        <?php endif; ?>
+      </section>
 
       <?php if ($layout['gallery']): ?>
       <section class="card side-card">
@@ -1439,7 +1581,7 @@
 
       <?php if ($layout['ads_sidebar'] && !$rightAd): ?>
       <section class="card side-card">
-        <div class="section-title">Homepage Sidebar Ad</div>
+        <div class="section-title">Sponsored / ad block</div>
         <div class="ads-slot">
           Homepage Sidebar Ad Slot<br>
           (Manage this from Admin → Ads)
