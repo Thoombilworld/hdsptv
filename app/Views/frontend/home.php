@@ -1033,7 +1033,7 @@
             <input type="hidden" name="<?= htmlspecialchars($key) ?>" value="<?= htmlspecialchars($value) ?>">
           <?php endforeach; ?>
         </form>
-      </section>
+      </div>
       <div class="user-bar">
         <?php $u = hs_current_user(); ?>
         <?php if ($u): ?>
